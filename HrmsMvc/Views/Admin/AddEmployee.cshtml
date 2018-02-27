@@ -1,0 +1,137 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminDashboard.cshtml";
+}
+@model HrmsMvc.Models.EmployeeModel
+
+<div class="container-fluid admin_other_window_user">
+    <div class="row cursor" style="margin-left:0px;margin-bottom:10px;">
+        <a href="/admin/users" title="Back to users"><i class="fa fa-chevron-circle-left fa-3x"></i></a>
+    </div>
+    <div class="row">
+        <form id="addEmpform" method="post" action="ManageEmployee">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="header">
+                        <h3 class="title">Add Employee</h3>
+                    </div>
+                    <div class="content">
+                        <div class="modal-body profile-content">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field">First name</label>
+                                        <input class="form-control inputField" id="EmployeeFirstName" name="first_name"
+                                               placeholder="Employee first name" required maxlength=20 />
+                                        @Html.Label("Enter Employee First name !", new { id = "lblempfirstname", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field">Last name</label>
+                                        <input class="form-control inputField" id="EmployeeLastName" name="last_name"
+                                               placeholder="Employee last name" maxlength=20 />
+                                        @Html.Label("Enter Employee Last name !", new { id = "lblemplastname", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <input id="SelGender" name="Gender" type="hidden" value="" />
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field">Gender</label>
+                                        @Html.HiddenFor(model => model.Gender)
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4">
+                                                <label>
+                                                    @Html.RadioButtonFor(model => model.Gender, "M", new { @id = "Empgendermale" })
+                                                    &nbsp;Male
+                                                </label>
+                                            </div>
+                                            <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4">
+                                                <label>
+                                                    @Html.RadioButtonFor(model => model.Gender, "F", new { @id = "Empgenderfemale" })
+                                                    &nbsp;Female
+                                                </label>
+                                            </div>
+                                            @Html.Label("Select Gender !", new { id = "lblgender", @class = "text-danger errLabel" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        @Html.Label("User role", htmlAttributes: new { @class = "labelclass hrms-required-field" })
+                                        @Html.HiddenFor(model => model.Usertype)
+                                        <select id="roleDropDwn" class="form-control inputField">
+                                            <option value="0">Select role</option>
+                                            @foreach (var item in @Model.UserRoleList)
+                                            {
+                                                <option value="@item.ID">@item.Privilage</option>
+                                            }
+                                        </select>
+                                        @Html.Label("Select User Role !", new { id = "lbluserrole", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        @Html.Label("Designation", htmlAttributes: new { @class = "labelclass hrms-required-field" })
+                                        @Html.HiddenFor(model => model.DesigType)
+                                        <select id="desigDrpDwn" class="form-control inputField">
+                                            <option value="0">Select Designation</option>
+                                            @foreach (var item in @Model.DesisnationList)
+                                            {
+                                                <option value="@item.ID">@item.designation</option>
+                                            }
+                                        </select>
+                                        @Html.Label("Select Employee designation !", new { id = "lblempDesig", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field">Date Of Birth</label>
+                                        <input type="text" class="form-control inputField" id="EmpDateOfBirth" name="EmpDateOfBirth"
+                                               placeholder="Date of birth" maxlength=15 required />
+                                        @Html.Label("Select Date of birth !", new { id = "ErrlblDateOfBirth", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field" for="Phone_number">Phone number</label>
+                                        <input class="form-control inputField" id="EmpPhoneNumber" maxlength="10"
+                                               name="PhoneNumber" placeholder="1234567890" type="text" required />
+                                        @Html.Label("Enter Phonenumber !", new { id = "lblphonenumber", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="labelclass hrms-required-field">Email id</label>
+                                        <input class="form-control inputField" id="EmpEmailId" name="EmailId"
+                                               placeholder="name@domain.com" required type="text" />
+                                        @Html.Label("Enter Email Id !", new { id = "lblEmailId", @class = "text-danger errLabel" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="card text-center card_label">
+                        <h3>Actions</h3>
+                        <div class="content">
+                            <input type="submit" value="Save" class="btn btn-primary btn-fill" id="EmpDetSubmitBtn" />
+                            <input value="Clear" class="btn btn-primary btn-fill btn-form" type="button" onclick="ClearValues();" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/Scripts/app/admin/manageemployee.js"></script>

@@ -1,0 +1,3 @@
+netsh http delete urlacl url=http://10.0.1.20:61288/ 
+
+netsh http add urlacl url=https://192.168.0.101:44357/ user=everyone

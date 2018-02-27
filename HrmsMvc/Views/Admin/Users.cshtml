@@ -1,0 +1,94 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminDashboard.cshtml";
+}
+@model HrmsMvc.Models.EmployeeModel
+@{
+    SelectList roleList = @ViewBag.RoleList;
+    SelectList desigList = @ViewBag.DesigList;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        var RolesList = @Html.Raw(Json.Encode(ViewBag.RoleList));
+        var DesigList = @Html.Raw(Json.Encode(ViewBag.desigList));
+    </script>
+</head>
+<body>
+    <div class="WaitdivPage row text-center">
+        <i class="fa fa-refresh fa-spin fa-2x fa-fw" id="imgProg"></i>
+    </div>
+    <div class="row row-sep user-header container-fluid">
+        <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
+            <div class="container-fluid user_search_container">
+                <div class="typeahead__container user_typeahead__container">
+                    <div class="typeahead__field">
+                        <span class="typeahead__button input-group-btn">
+                            <button class="typeahead_custom_searchBtn">
+                                <i class="typeahead__search-icon"></i>
+                            </button>
+                        </span>
+                        <span class="typeahead__query">
+                            <input class="typeahead_custom_searchBar js-typeahead-user-v2 form-control" name="user-v2[query]" type="search"
+                                   placeholder="Search..." autocomplete="off">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12 row-sep">
+            <div class="row pull-right">
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3" style="margin-right: 15px;">
+                            <span class="pull-left">
+                                <button class="btn btn-info btn-fill" type="button" id="empRefreshBtn"
+                                        onclick="showLoad();UpdateEmpTable(1);$('#cardContainer').empty();blockNumber=1;"
+                                        style="border-radius: 5px;" title="Refresh">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
+                            <span>
+                                <button class="btn btn-primary btn-fill" type="button" data-toggle="modal"
+                                        onclick="AddEmployee();" data-target="#AddEmpModal" title="Add user">
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 hidden">
+                            <span>
+                                <button class="btn btn-warning btn-fill" type="button" id="empEditBtnMain"
+                                        title="Edit user" disabled>
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 hidden">
+                            <span>
+                                <button class="btn btn-danger btn-fill" type="button" id="empDeleteBtnMain"
+                                        title="Delete user" disabled>
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid usercontainer">
+        <div class="row row-sep user-container-content">
+            <div class="col-md-12">
+                <div class="row" id="cardContainer">
+                </div>
+                <div id="loadingDiv" style="text-align: center; display: none; margin-bottom: 20px;">
+                    <i class="fa fa-refresh fa-spin fa-2x fa-fw" id="imgProg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/app/admin/users.js"></script>

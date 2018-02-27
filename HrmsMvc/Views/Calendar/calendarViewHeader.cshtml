@@ -1,0 +1,94 @@
+﻿<div class="row calendarHeader">
+    <div class="col-lg-6 col-md-6">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 col-padding-bottom">
+                <div class="pull-left week-prv-cntnr" title="Previous">
+                    <button class="btn btn-default nav-action-btn cursor" id="weekview-prevbtn"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                </div>
+                <div class="pull-right week-nxt-cntnr" title="Next">
+                    <button class="btn btn-default nav-action-btn cursor" id="weekview-nextbtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                </div>
+                <div class="week-cntnr" title="Today">
+                    <input type="button" value="Today" id="week-today-btn" class="btn btn-default nav-action-btn today-btn cursor" />
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 col-padding-bottom">
+                <div id="weeknumberbtn_container" class="btn-group mng-event-popup-weekday-btngroup" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default mng_event_popup_weeknumber_btn mng-event-popup-weekday-btn-sel" id="calendar_header_month_view_nav_btn" data-id="2">Month</button>
+                    <button type="button" class="btn btn-default mng_event_popup_weeknumber_btn mng-event-popup-weekday-btn-unsel" id="calendar_header_week_view_nav_btn" data-id="3">Week</button>
+                    <button type="button" class="btn btn-default mng_event_popup_weeknumber_btn mng-event-popup-weekday-btn-unsel" id="calendar_header_day_view_nav_btn" data-id="4">Day</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (@Model.Usertype == 1)
+            {
+        <div class="col-lg-6 col-md-6">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 col-padding-bottom">
+                    <div class="dropdown inskrivna_dropdown" id="drp4">
+                        <input type="hidden" id="all_people_label" value="All employees" />
+                        <button type="button" class="btn btn-default dropdown-toggle nav-action-btn-start toggle-btn-default cursor" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" id="drpDwnBtnLast">
+                            <div>
+                                <label class="calendarheader_people_sel">All employees</label>&nbsp;
+                                <i id="drpDwnBtnLastIcon" class="fa fa-chevron-down pull-right toggle-btn-caret"></i>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu event-cal-custom-dropdwon-menu" id="dropdown-inskrivna">
+                            <li>
+                                <div class="container-fluid">
+                                    <label class="selLabel calendarheader_people_sel">
+                                        All employees
+                                    </label>
+                                    &nbsp;<i id="clearSelEmpBtn" class="fa fa-times pull-right cursor emp_remove_icon" title="clear"></i>
+                                </div>
+                                <div class="container-fluid calendar-search-container">
+                                    <div class="typeahead__container">
+                                        <div class="typeahead__field">
+                                            <span class="typeahead__button input-group-btn">
+                                                <button class="typeahead_custom_searchBtn">
+                                                    <i class="typeahead__search-icon"></i>
+                                                </button>
+                                            </span>
+                                            <span class="typeahead__query">
+                                                <input class="typeahead_custom_searchBar js-typeahead-people-v2 form-control" name="country_v2[query]" type="search" placeholder="Search..." autocomplete="off">
+                                                <input type="hidden" id="no_results_label_cal_search" name="" value="No results found !!">
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 pull-right col-padding-bottom">
+                    <button class="btn btn-success nav-add-item-btn cursor pull-right" onclick="manageEvent();">
+                        <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>&nbsp;Create event
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<br />
+<div class="row">
+    <div class="container-fluid text-left">
+        <div class="display-inline">
+            <div class="display-inline circle blue-bg"></div>
+            <span class="display-inline">Assigned</span>
+        </div>
+        <div class="display-inline">
+            <div class="display-inline circle orange-bg"></div>
+            <span class="display-inline">Ongoing</span>
+        </div>
+        <div class="display-inline">
+            <div class="display-inline circle yellow-bg"></div>
+            <span class="display-inline">Review</span>
+        </div>
+        <div class="display-inline">
+            <div class="display-inline circle green-bg"></div>
+            <span class="display-inline">Completed</span>
+        </div>
+    </div>
+</div>

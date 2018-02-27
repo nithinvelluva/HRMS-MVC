@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "SentQuery";
+}
+<body>
+    <div class="row">
+        <div class="col-lg-4">
+            <h5>From</h5>
+        </div>
+        <div class="col-lg-8">
+            <input type="text" id="senterEmail" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <h5 class="hrms-required-field">Subject</h5>
+        </div>
+        <div class="col-lg-8">
+            <input type="text" class="form-control" id="Emailsubject" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <h5 class="hrms-required-field">Message</h5>
+        </div>
+        <div class="col-lg-8">
+            <textarea id="EmailBody" class="form-control txt_area"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12 text-center">
+            <i class="fa fa-paper-plane fa-2x cursor" aria-hidden="true" id="sentQuery" onclick="SentQuery();" title="Sent"></i>
+        </div>
+    </div>
+</body>
+<script src="~/Scripts/app/user/sentQuery.js"></script>

@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="../Content/Images/icon-crm.ico">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <!--  CSS files    -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard/Admin/AdminDashboard.css" rel="stylesheet" />
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/datepicker3.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/Dashboard/light-bootstrap-dashboard.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/ymz_box.css" type="text/css" rel="stylesheet">
+    <link href="~/Content/jquery.typeahead.min.css" rel="stylesheet" />
+    <!--     Fonts and icons     -->
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font_style/Roboto-font.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font_style/pe-icon-7-stroke.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font_style/icomoon-font.css" rel="stylesheet" />
+    <link href="~/Content/Dashboard/User/Imageoverlay.css" rel="stylesheet" /> 
+
+    <!--   Core JS Files   -->
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/Dashboard/constants.js" type="text/javascript"></script>
+    <script src="~/Scripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/Dashboard/light-bootstrap-dashboard.js" type="text/javascript"></script>
+    <script src="~/Scripts/Helpers/ymz_box.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/Helpers/Common.js"></script>
+    <script src="~/Scripts/jquery.typeahead.min.js"></script>
+    <script src="~/Scripts/jquery.timesetter.js"></script>
+    <script src="~/Scripts/fullcalendar.min.js"></script>
+    <script src="~/Scripts/jstree.min.js"></script>
+    <script>
+        var empId = @Html.Raw(Json.Encode(ViewBag.EmpId));
+        var userType = @Html.Raw(Json.Encode(ViewBag.UserType));
+        localStorage.setItem("user_data", JSON.stringify({'empId':empId,'userType':userType}));
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="sidebar" data-color="purple" id="admin_panel_sidebar">
+            <div class="sidebar-wrapper">
+                <div class="logo">
+                    <a href="~/admin/users" class="simple-text">
+                        HRMS - DASHBOARD
+                    </a>
+                </div>
+                <ul class="main-nav nav">                    
+                    <li class="active" id="usersRef">
+                        <a href="~/admin/users">
+                            <i class="pe-7s-user"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
+                    <li id="dashboard_attendanceRef">
+                        <a href="~/admin/attendance">
+                            <i class="pe-7s-note2"></i>
+                            <p>Attendance</p>
+                        </a>
+                    </li>
+                    <li id="dashboard_LeavesRef">
+                        <a href="~/admin/leaves">
+                            <i class="pe-7s-news-paper"></i>
+                            <p>Leaves</p>
+                        </a>
+                    </li>
+                    <li id="dashboard_ReportsRef">
+                        <a href="~/admin/employeereports">
+                            <i class="pe-7s-science"></i>
+                            <p>Reports</p>
+                        </a>
+                    </li>
+                    <li id="empEventsRef">
+                        <a href="~/calendar">
+                            <i class="fa fa-calendar"></i>
+                            <p>Tasks</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel dashboardContentDiv">
+            <nav class="navbar navbar-default navbar-fixed fixed admin-panel-navbar" id="dashboard_admin_panel_header">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="~/login/logout">
+                                    Log out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="content">
+                <div class="contentDiv">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="~/Scripts/app/admin/admindashboard.js"></script>
+

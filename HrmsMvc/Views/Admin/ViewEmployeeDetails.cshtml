@@ -1,0 +1,160 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminDashboard.cshtml";
+}
+@model HrmsMvc.Models.EmployeeModel
+
+<div class="container-fluid admin_other_window_user">
+    <div class="row cursor" style="margin-left:0px;margin-bottom:10px;">
+        <a href="/admin/users" title="Back to users"><i class="fa fa-chevron-circle-left fa-3x"></i></a>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="header">
+                    <h3 class="title" title="@(Model.EmpFirstname+" "+Model.EmpLastname)">@(Model.EmpFirstname + " " + Model.EmpLastname)</h3>
+                    <input id="EMPIDEdit" name="EMPID" type="hidden" class="form-control" value="@Model.EmpID" />
+                </div>
+                <div class="content">
+                    <div class="modal-body profile-content">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">                               
+                                <div class="form-group">
+                                    <label class="labelclass hrms-required-field">First name</label>
+                                    <input class="form-control inputField" id="EmployeeFirstName" name="EmpName"
+                                           placeholder="Employee name" required maxlength=20 disabled value="@Model.EmpFirstname" />
+                                    <label class="text-danger errLabel" id="lblempfirstnameEdit">Enter Employee First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="labelclass">Last name</label>
+                                    <input class="form-control inputField" id="EmployeeLastName" name="EmpName"
+                                           placeholder="Employee name" required maxlength=20 disabled value="@Model.EmpLastname" />
+                                    <label class="text-danger errLabel" id="lblemplastnameEdit">Enter Employee Last Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <input id="GenderEdit" name="Gender" type="hidden" value="" />
+                                <div class="form-group">
+                                    <label class="labelclass hrms-required-field">Gender</label>
+                                    <div class="row disablediv">
+                                        <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4">
+                                            <label>
+                                                @Html.RadioButtonFor(model => model.Gender, "M", new { @checked = true, @id = "EmpgendermaleEdit" })
+                                                &nbsp;Male
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4">
+                                            <label>
+                                                @Html.RadioButtonFor(model => model.Gender, "F", new { @id = "EmpgenderfemaleEdit" })
+                                                &nbsp;Female
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <input id="UsertypeEdit" name="Usertype" type="hidden" value="@Model.Usertype" />
+                                    @Html.Label("User role", htmlAttributes: new { @class = "labelclass hrms-required-field" })
+                                    <select id="roleDropDwnEdit" class="form-control inputField">
+                                        <option value="0">Select userrole</option>
+                                        @foreach (var item in @Model.UserRoleList)
+                                        {
+                                            <option value="@item.ID" selected="@(Model.Usertype == item.ID)">@item.Privilage</option>
+                                        }
+                                    </select>
+                                    @Html.Label("Select User Role !", new { id = "lbluserroleEdit", @class = "text-danger errLabel" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <input id="DesigTypeEdit" name="DesigType" type="hidden" value="@Model.DesigType" />
+                                    @Html.Label("Designation", htmlAttributes: new { @class = "labelclass hrms-required-field" })
+                                    <select id="desigDrpDwnEdit" class="form-control inputField">
+                                        <option value="0">Select Designation</option>
+                                        @foreach (var item in @Model.DesisnationList)
+                                        {
+                                            <option value="@item.ID" selected="@(Model.DesigType == item.ID)">@item.designation</option>
+                                        }
+                                    </select>
+                                    @Html.Label("Select Employee designation !", new { id = "lblempDesigEdit", @class = "text-danger errLabel" })
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="labelclass hrms-required-field">Date Of Birth</label>
+                                    <input type="text" class="form-control inputField" id="EmpDateOfBirthEdit" name="EmpDateOfBirth"
+                                           placeholder="Date of birth" maxlength=15 required disabled value="@Model.DateOfBirth" />
+                                    <label class="text-danger errLabel" id="ErrlblDateOfBirthEdit">Select Date of birth</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="labelclass hrms-required-field" for="Phone_number">Phone number</label>
+                                    <input class="form-control inputField" id="EmpPhoneNumberEdit" maxlength="10"
+                                           name="PhoneNumber" placeholder="1234567890" type="text" value="@Model.PhoneNumber" required disabled />
+                                    <label class="text-danger errLabel" id="lblphonenumberEdit">Enter Phonenumber</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="labelclass hrms-required-field">Email id</label>
+                                    <input class="form-control inputField" id="EmpEmailIdEdit" name="EmailId"
+                                           placeholder="name@domain.com" required type="text" value="@Model.EmailId" disabled />
+                                    <label class="text-danger errLabel" id="lblEmailIdEdit">Enter Email Id</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="card">
+                    <div class="content">
+                        <div class="row text-center">
+                            <div class="col-lg-12">
+                                <div id="effect-5" class="effects clearfix imgContainer">
+                                    <div class="img avatar cursor" style="width:170px;height:150px;margin: 0 auto;">
+                                        @{
+                                            var basePath = "/Content/UserIcons/";
+                                            var userPhotoPath = (Model.UserPhotoPath != null && Model.UserPhotoPath != "") ? basePath + Model.UserPhotoPath :
+                                                (Model.Gender == "M") ? "/Content/Images/male-avatar.png" : "/Content/Images/female-avatar.png";
+                                        }
+                                        <img id="userAvatar" width="170" height="150" src="@userPhotoPath" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card text-center card_label">
+                    <h3>Actions</h3>
+                    <div class="content">
+                        @if (Model.EmpID > 0)
+                        {
+                            <input value="Save" class="btn btn-primary btn-fill btn-form" id="EmpEditBtn" onclick="empEdit();" type="button" />
+                            <button class="btn btn-danger btn-fill btn-form" type="button" id="empDeleteBtn"
+                                    style="border-radius: 5px;" title="Delete user" onclick="empDelete();">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/app/admin/manageemployee.js"></script>

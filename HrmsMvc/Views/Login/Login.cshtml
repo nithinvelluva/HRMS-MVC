@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "HRMS";
+}
+@model HrmsMvc.Models.LoginModel
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HRMS</title>  
+    <link href="~/Content/Login.css" rel="stylesheet" />  
+</head>
+<body>
+    <div class="wrapper">
+        <section>
+            @using (Html.BeginForm("login", "login", FormMethod.Post, new { id = "loginForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <form autocomplete="off">
+                    <div class="login-card">
+                        <h2 class="text-center">LOGIN</h2><br>
+                        @Html.TextBoxFor(model => model.UserName,"", new { @class = "form-control", placeholder = "USERNAME", onblur = "onBlurInput()"})
+                        @Html.TextBoxFor(model => model.Password,"", new { @class = "form-control", placeholder = "PASSWORD", type = "password",onblur = "onBlurInput()"})                        
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @style = "float:left;", @id = "ErrorMsg" })                       
+                        <input type="submit" name="login" class="login login-submit btn btn-primary btn-fill" value="Sign In">
+                        <br />
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a href="~/login/forgotpassword" class="pull-right hrefLink" id="btnForgotPwd">Forgot Password ?</a>
+                        </div>
+                    </div>
+                </form>
+            }
+        </section>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/app/account/Login.js"></script>
+

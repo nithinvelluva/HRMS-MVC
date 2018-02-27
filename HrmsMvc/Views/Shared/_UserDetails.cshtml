@@ -1,0 +1,145 @@
+﻿@model HrmsMvc.Models.EmployeeModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HRMS</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="../Content/Images/icon-crm.ico">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard/User/UserDetails.css" rel="stylesheet" />
+    <link href="~/Content/Dashboard/light-bootstrap-dashboard.css" rel="stylesheet" type="text/css" />
+    <!--     Fonts and icons     -->
+    <link href="~/Content/font_style/icomoon-font.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font_style/Roboto-font.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font_style/pe-icon-7-stroke.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/datepicker3.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/ymz_box.css" type="text/css" rel="stylesheet">
+    <!--   Core JS Files   -->
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/Helpers/Common.js"></script>
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <script src="~/Scripts/Dashboard/constants.js" type="text/javascript"></script>
+    @*<script src="~/Scripts/Dashboard/light-bootstrap-dashboard.js" type="text/javascript"></script>*@
+    <script src="~/Scripts/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/Helpers/ymz_box.min.js" type="text/javascript"></script>
+
+    <script src="~/Scripts/fullcalendar.min.js"></script>
+    <script src="~/Scripts/jquery.typeahead.min.js"></script>
+    <script src="~/Scripts/jquery.timesetter.js"></script>
+    <script>
+        var offset = (new Date()).getTimezoneOffset();
+        var empId = @Html.Raw(Json.Encode(ViewBag.EmpId));
+        var userType = @Html.Raw(Json.Encode(ViewBag.UserType));
+        var UserGender= @Html.Raw(Json.Encode(ViewBag.Gender));
+        var userPhoto = @Html.Raw(Json.Encode(ViewBag.UserPhotoPath));
+        localStorage.setItem("user_data", JSON.stringify({'empId':empId,'userType':userType}));
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="sidebar" data-color="purple">
+            <div class="sidebar-wrapper">
+                <div class="logo">
+                    <a href="~/user/profile" class="simple-text">
+                        HRMS - PROFILE
+                    </a>
+                </div>
+                <ul class="main-nav nav">
+                    <li id="userProfileRef">
+                        <a href="~/user/profile">
+                            <i class="pe-7s-user"></i>
+                            <p>Profile</p>
+                        </a>
+                    </li>
+                    <li id="attendanceRef">
+                        <a href="~/user/attendance">
+                            <i class="pe-7s-note"></i>
+                            <p>Attendance</p>
+                        </a>
+                    </li>
+                    <li id="leavesRef" onclick="leaveRefClick()" class="cursor">
+                        <a href="#leaveItemsDiv" data-toggle="collapse" aria-haspopup="false" aria-expanded="false">
+                            <i class="pe-7s-note2"></i>
+                            <p>
+                                Leaves
+                                <i id="dropdownIcon" class="glyphicon glyphicon-chevron-down pull-right dropdown-icon-normal"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-list collapse" id="leaveItemsDiv">
+                            <li class="cursor" id="applyLeaveRefLi"><a href="~/user/leaves">Apply Leave</a></li>
+                            <li class="cursor" id="leaveReportRefLi"><a href="~/user/leavereports">Leave Reports</a></li>
+                        </ul>
+                    </li>
+                    <li id="empReportRef">
+                        <a href="~/user/reports">
+                            <i class="pe-7s-news-paper"></i>
+                            <p>Reports</p>
+                        </a>
+                    </li>
+                    <li id="empEventsRef">
+                        <a href="~/calendar">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <p>Tasks</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <nav class="navbar navbar-default navbar-fixed">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="javascript:void(0)">Profile</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right" style="padding-right:1em">
+                            <li class="dropdown cursor">
+                                <a href="javascript:void(0)" class="dropdown-toggle usr_drpdwn" data-toggle="dropdown">
+                                    <label id="wlcmMsgLabel" class="wlcmMsg" title="@(Model.EmpFirstname + " " + Model.EmpLastname)">@(Model.EmpFirstname + " " + Model.EmpLastname)</label>&nbsp;<i class="fa fa-user" aria-hidden="true"></i>
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="cursor">
+                                        <a href="~/user/changepassword" id="chngPwdRef">
+                                            <i class="fa fa-cog" aria-hidden="true"></i>&nbsp;Change Password
+                                        </a>
+                                    </li>
+                                    <li class="cursor">
+                                        <a href="~/login/logout" id="signoutRef">
+                                            <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Sign Out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="content container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="contentDiv">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/app/user/user-sidebar.js"></script>

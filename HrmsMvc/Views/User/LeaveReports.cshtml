@@ -1,0 +1,183 @@
+﻿@{
+    ViewBag.Title = "LeaveReports";
+    SelectList monthLst = @ViewBag.MonthList;
+    SelectList leaveDurList = @ViewBag.LeaveDurTypes;
+    SelectList leaveTypeList = @ViewBag.LeaveTypes;
+    Layout = "~/Views/Shared/_UserDetails.cshtml";
+}
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/responsive.dataTables.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/dataTables.responsive.min.js"></script>
+    <script>
+        var LeaveDurList = @Html.Raw(Json.Encode(ViewBag.LeaveDurTypes));
+        var LeaveTypList = @Html.Raw(Json.Encode(ViewBag.LeaveTypes));
+    </script>
+</head>
+<body>
+    <div class="modal fade" id="EditLeaveModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title text-center">Leave Details</h3>
+                </div>
+                <div id="LoadPageLvEdit" class="row text-center waitIconDivRprt" style="display:none">
+                    <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgLvEdit"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="lvEditView">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="hrms-required-field">From Date</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                <input type="text" class="form-control" id="LvstartDateLabel" placeholder="From Date" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="hrms-required-field">To Date</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                <input type="text" class="form-control" id="LvtoDateLabel" placeholder="To Date" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="top-margin">Leave Status</h5>
+                            </div>
+                            <div class="col-lg-6 top-margin">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label id="leaveStatusLabel"></label>
+                                    </div>
+                                    <div class="col-lg-6" id="lv_cancel_div" hidden>
+                                        <input type="checkbox" id="lv_cancel_chkBx" disabled="disabled" title="Cancel Leave" />
+                                        <label for="lv_cancel_chkBx">Cancel</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="hrms-required-field">Leave Type</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                @Html.DropDownList("leaveTypeLabel", leaveTypeList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="hrms-required-field">Duration Type</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                @Html.DropDownList("LvDurTypLabel", leaveDurList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5>Comments</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                <textarea id="cmntsArea" class="form-control txt-area" placeholder="Comments" maxlength="3992"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row modal-footer">
+                        <div class="col-lg-12 text-center">
+                            <input type="submit" value="Edit" class="btn btn-info btn-fill" id="LeaveEditBtn" onclick="LeaveEditClick()" />
+                            <input type="button" value="Update" style="display:none" id="LeaveUpdateBtn" class="btn btn-info btn-fill" onclick="LeaveUpdateClick()" />
+                            <i class="fa fa-envelope fa-2x cursor" aria-hidden="true" id="cntctAdmin" data-toggle="modal" data-target="#SentLeaveQueryModal"
+                               title="Contact Admin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade col-xs-12 col-md-12 col-lg-12 col-sm-12" id="SentLeaveQueryModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title text-center">Sent Query</h3>
+                </div>
+                <div id="LoadPageLvQuery" class="row text-center waitIconDivRprt" style="display:none">
+                    <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgQuery"></i>
+                </div>
+                <div class="modal-body" id="contactAdminDiv">
+                    @Html.Partial("../EMail/SentQuery")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="header">
+            <h4 class="title" id="profileTitle">Leave Reports</h4>
+        </div>
+        <div class="content">
+            @Html.Hidden("LeaveId")
+            <div class="row text-center">
+                <div class="col-lg-6">
+                    <h5 id="monthLabel"></h5>
+                </div>
+                <div class="col-lg-6">
+                    <h5 id="dateLabel"></h5>
+                </div>
+            </div>
+            <br />
+            <div class="row container-fluid">
+                <div class="col-lg-4 col-xs-12 col-md-4 col-sm-12">
+                    <div id="custom-search-input" class="input-field">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Select Date" id="chngDatePicker" autocomplete="off" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info btn-lg" type="button" id="goBtn" onclick="ChngClick()">
+                                    <i class="fa fa-search fa-lg"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    @Html.Label("Select a date !!", new { id = "lblChnDate", @class = "text-danger errLabel" })
+                </div>
+            </div>
+            <br />
+            <div class="row text-center waitIconDiv" id="LoadIconDiv">
+                <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgLvRprt"></i>
+            </div>
+            <div class="row text-center">
+                @Html.Label("No Records Found!!", new { id = "lblLvNoResults", @class = "text-danger" })
+            </div>
+            <div class="row TableDivLvRprt text-center" style="display:none">
+                <table id="LvReprtTable" class="display nowrap responsive" cellspacing="0" style="width:95%;">
+                    <thead class="tableHeader">
+                        <tr>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Leave Type</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/app/user/leavereports.js"></script>
