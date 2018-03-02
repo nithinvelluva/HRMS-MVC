@@ -216,7 +216,7 @@ namespace HrmsMvc
 
                     cmd = new SqlCommand("SELECT ID FROM EmployeeInfo WHERE UPPER(EmpEmail) = @empEmailUpper", con);
                     cmd.Parameters.AddWithValue("empEmailUpper", em.EmailId.ToUpper());
-                    int emaildup = Convert.ToInt32(cmd.ExecuteScalar());                    
+                    int emaildup = Convert.ToInt32(cmd.ExecuteScalar());
 
                     if (idDup > 0)
                     {
@@ -855,23 +855,10 @@ namespace HrmsMvc
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
                 {
                     con.Open();
-                    SqlCommand cmd1 = new SqlCommand("SELECT ID FROM LeaveStatistics WHERE Year = @year", con);
-                    cmd1.Parameters.AddWithValue("year", DateTime.Now.Year);
-                    int id = Convert.ToInt32(cmd1.ExecuteScalar());
-
-                    if (id <= 0)
-                    {
-                        cmd1 = new SqlCommand("AddLeaveInfo", con);
-                        cmd1.CommandType = CommandType.StoredProcedure;
-                        cmd1.Parameters.AddWithValue("@count", 0);
-                        cmd1.Parameters.AddWithValue("@loopVar", 0);
-                        cmd1.Parameters.AddWithValue("@i", 0);
-                        cmd1.Parameters.AddWithValue("@casual", 0.0);
-                        cmd1.Parameters.AddWithValue("@festive", 0.0);
-                        cmd1.Parameters.AddWithValue("@sick", 0.0);
-                        cmd1.Parameters.AddWithValue("@year", DateTime.Now.Year);
-                        cmd1.ExecuteNonQuery();
-                    }
+                    SqlCommand cmd = new SqlCommand("AddLeaveInfo", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@year", DateTime.Now.Year);
+                    cmd.ExecuteNonQuery();
                     con.Close();
                 }
             }
