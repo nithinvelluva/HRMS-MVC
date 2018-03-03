@@ -336,11 +336,11 @@ namespace HrmsMvc.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult GetEmployeeData(int BlockNumber = 1)
+        public JsonResult GetEmployeeData(int BlockNumber = 1,int sortingVal = 1)
         {
             List<EmployeeModel> empDetails = new List<EmployeeModel>();
             int BlockSize = 8;
-            empDetails = Db.GetEmployeeDetails(BlockSize, BlockNumber);
+            empDetails = Db.GetEmployeeDetails(BlockSize, BlockNumber,sortingVal);
             return Json(new { data = empDetails, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
         }
 

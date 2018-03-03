@@ -96,6 +96,7 @@ namespace HrmsMvc.Models
         public double _casualLeave { get; set; }
         public double _festiveLeave { get; set; }
         public double _sickLeave { get; set; }
+
         [AllowHtml]
         public string _fromdate { get; set; }
         [AllowHtml]
@@ -105,12 +106,17 @@ namespace HrmsMvc.Models
         public int _leaveDurTypeInt { get; set; }
         public string _strLvType { get; set; }
         public int _leaveType { get; set; }
+
+        public int _leaveHalfDaySession { get; set; } //1 - morning, 2 - afternoon
+
         [AllowHtml]
         public string _comments { get; set; }
         public bool _status { get; set; }
         public bool _rejected { get; set; }
         public bool _cancelled { get; set; }
         public string _leaveStatus { get; set; }
+
+        public int _calendarEntryId { get; set; }
 
         public ArrayList RtrnArry { get; set; }
     }
@@ -150,14 +156,14 @@ namespace HrmsMvc.Models
     public class CalendarEventInfo
     {
         public int Id { get; set; }
-        public List<int> employee { get; set; }
+        public IList<int> employee { get; set; }
         public int event_type { get; set; }
         public string heading { get; set; }
         public string note { get; set; }
         public int status { get; set; }
-        public List<CalendarEventDate> event_dates { get; set; }
-        public List<CalendarEventArchive> archive { get; set; }
-        public List<CalendarEventEmployees> employees { get; set; }
+        public IList<CalendarEventDate> event_dates { get; set; }
+        public IList<CalendarEventArchive> archive { get; set; }
+        public IList<CalendarEventEmployees> employees { get; set; }
 
     }
 
@@ -194,7 +200,7 @@ namespace HrmsMvc.Models
 
     }
 
-    public class CalendarEventTreeItems
+    public class CalendarEventTreeItems:CalendarEventInfo
     {
         public int id { get; set; }
         public string name { get; set; }
@@ -205,7 +211,6 @@ namespace HrmsMvc.Models
         public string type { get; set; }
 
         public List<CalendarEventTreeItems> children { get; set; }
-
     }
 
     public class EmployeeViewModel

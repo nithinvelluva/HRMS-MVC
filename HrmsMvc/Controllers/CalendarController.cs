@@ -114,7 +114,7 @@ namespace HrmsMvc.Controllers
                 }
                 if (event_filter_id == 2 || event_filter_id == 0)
                 {
-                    //birthday_events = Db.getEmployeeBirthdayEvents(_start_date, _end_date);
+                    birthday_events = Db.getEmployeeBirthdayEvents(_start_date, _end_date);
                 }
 
                 row = null;

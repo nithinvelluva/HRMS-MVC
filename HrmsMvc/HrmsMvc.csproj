@@ -320,6 +320,7 @@
     </Compile>
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Models\EmployeeViewModel.cs" />
+    <Compile Include="Models\GenericCallbackModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

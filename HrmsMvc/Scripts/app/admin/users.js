@@ -123,7 +123,13 @@ $(document).ready(function () {
             $('.js-typeahead-user-v2').val('');
             $('.typeahead__list').empty();
         }
-    });    
+    });
+    $('#user_list_sorting_order').on('change', function () {
+        blockNumber = 1;
+        $('#cardContainer').empty();
+        showLoad();
+        UpdateEmpTable();
+    });
 });
 function showLoad() {
     $("#imgProg").show();
@@ -150,7 +156,7 @@ function UpdateEmpTable(currBlockNumber) {
     $.ajax({
         url: "/Admin/GetEmployeeData",
         type: "POST",
-        data: JSON.stringify({ BlockNumber: currBlockNumber }),
+        data: JSON.stringify({ BlockNumber: currBlockNumber, sortingVal: $('#user_list_sorting_order').val() }),
         datatype: "json",
         contentType: "application/json",
         success: function (status) {

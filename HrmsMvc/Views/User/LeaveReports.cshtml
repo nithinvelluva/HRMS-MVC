@@ -85,6 +85,19 @@
                                 @Html.DropDownList("LvDurTypLabel", leaveDurList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
                             </div>
                         </div>
+                        <div class="row hidden" id="lvSessionTypDiv">
+                            <div class="col-lg-6">
+                                <h5 class="hrms-required-field">Session</h5>
+                            </div>
+                            <div class="col-lg-6">
+                                <select class="form-control" id="LeaveSessionDropDown">
+                                    <option value="0">Select a session</option>
+                                    <option value="1">Morning session (09.00 AM to 1.00 PM)</option>
+                                    <option value="2">Afternoon session (01.00 PM to 06.00 PM)</option>
+                                </select>
+                                @Html.Label("Please Select a session !!", new { id = "ErrLvSession", @class = "text-danger errLabel" })
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-lg-6">
                                 <h5>Comments</h5>

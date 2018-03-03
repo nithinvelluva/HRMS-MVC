@@ -43,7 +43,7 @@ $(document).ready(function () {
         var isEdit = $(this).attr('data-IsEdit');
         var isRejected = $(this).attr('data-IsRejected');
         var isCancel = $(this).attr('data-IsCancel');
-
+        var lvSessionTyp = $(this).attr('data-lvsessiontyp');
         //pending state.
         if (isEdit == "true" && isRejected == "false" && isCancel == "false") {
             $('#LeaveEditBtn').show();
@@ -108,11 +108,26 @@ $(document).ready(function () {
             });
         }
         $('#LvDurTypLabel').val(durId);
+        (durId == 2) ? $('#LeaveSessionDropDown').val(lvSessionTyp) : $('#LeaveSessionDropDown').val(0);
+        (durId == 2) ? $('#lvSessionTypDiv').removeClass('hidden') : ($('#lvSessionTypDiv').removeClass('hidden').addClass('hidden'));
     });
     $('#SentLeaveQueryModal').on('shown.bs.modal', function () {
         $('#senterEmail').val("nithinvelluva@gmail.com");
         $('#Emailsubject').val('');
         $('#EmailBody').val('');
+    });
+    $('#LvDurTypLabel').on('change', function () {
+        if (stringIsNull($(this).val())
+            || $(this).val() < 0) {
+            $(this).css('border-color', 'red');
+            $('#ErrLvDur').show();
+        }
+        else {
+            $(this).css('border-color', '');            
+            var lvDurationTyp = $(this).val();
+            (lvDurationTyp == 2) ? $('#lvSessionTypDiv').removeClass('hidden') :
+            $('#lvSessionTypDiv').removeClass('hidden').addClass('hidden'); $('#LeaveSessionDropDown').val(0);
+        }
     });
 });
 function LeaveEditClick() {
@@ -130,12 +145,18 @@ function LeaveUpdateClick() {
     var lvdurtyp = $('#LvDurTypLabel').val();
     var lvdurtypstr = $('#LvDurTypLabel option:selected').text();
     IsCancel = $('#lv_cancel_chkBx').is(':checked');
+    var LvSession = $('#LeaveSessionDropDown').val();
 
     var validFlag = false;
     if (stringIsNull(strtDate)) {
         validFlag = true;
     }
     if (stringIsNull(toDate)) {
+        validFlag = true;
+    }
+    if (!stringIsNull(lvdurtyp) && 2 == lvdurtyp && stringIsNull(LvSession)) {
+        $('#LeaveSessionDropDown').css('border-color', 'red');
+        $('#ErrLvSession').show();
         validFlag = true;
     }
     if (!validFlag) {
@@ -151,7 +172,8 @@ function LeaveUpdateClick() {
             _strLvType: lvtypstr,
             Usertype: userType,
             _leavedurationtype: lvdurtypstr,
-            _cancelled: IsCancel
+            _cancelled: IsCancel,
+            _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0
         };
         $.ajax({
             url: "/User/AddLeave",
@@ -240,6 +262,7 @@ function EnableLeaveFields() {
     $('#leaveTypeLabel').removeAttr("disabled");
     $('#LvDurTypLabel').removeAttr("disabled");
     $('#lv_cancel_chkBx').removeAttr("disabled");
+    $('#LeaveSessionDropDown').removeAttr("disabled");
 };
 function DisableLeaveFields() {
     $('#LvstartDateLabel').attr('disabled', 'disabled');
@@ -248,6 +271,7 @@ function DisableLeaveFields() {
     $('#leaveTypeLabel').attr('disabled', 'disabled');
     $('#LvDurTypLabel').attr('disabled', 'disabled');
     $('#lv_cancel_chkBx').attr('disabled', 'disabled');
+    $('#LeaveSessionDropDown').attr('disabled', 'disabled');
 };
 function ChngClick() {
     clearErrors();

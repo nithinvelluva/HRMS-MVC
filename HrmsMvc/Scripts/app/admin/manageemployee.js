@@ -1,4 +1,4 @@
-$(document).ready(function () {    
+$(document).ready(function () {
     navigateTo(USERS);
     $('#EmpDateOfBirth').datepicker({
         format: 'yyyy-mm-dd', autoclose: true
@@ -292,7 +292,7 @@ function empEdit() {
                     $('#roleDropDwnEdit').val(2);
                 },
                 yes_fn: function () {
-                    AjaxCall(url, params, callback,HideLoadprofile);
+                    AjaxCall(url, params, callback, HideLoadprofile);
                 }
             });
         }

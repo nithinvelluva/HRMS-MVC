@@ -567,14 +567,6 @@ $.fn.extend({
         return this;
     }
 });
-$(document).on('click', '.mng_event_popup_weeknumber_btn', function () {
-    var week_start_day = new Date($(this).attr('data-info'));
-    $('.mng_event_popup_weeknumber_btn').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
-    $('.mng-event-popup-weekday-btn').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
-    $(this).toggleClass('mng-event-popup-weekday-btn-sel').toggleClass('mng-event-popup-weekday-btn-unsel');
-    var view_type_btns = $('.fc-button-group').find('button');
-    $(view_type_btns[$(this).attr('data-id')]).trigger('click');
-});
 function eventLoading(isLoading) {
     (isLoading) ? $('#week-calendar-view-event-load').show() : $('#week-calendar-view-event-load').hide();
 };
@@ -692,7 +684,7 @@ $(document).ready(function () {
                             var userPhotoPath = (employee.UserPhotoPath) ? "/Content/UserIcons/" + employee.UserPhotoPath : ("M" == (employee.Gender).trim()) ? "/Content/Images/male-avatar.png" : "/Content/Images/female-avatar.png";
                             var people_avatar_html = '<li class="addMember-item"><img class="employee-select-avatar-sub" src="' + userPhotoPath + '" title="' + employee.EmpFirstname + " " + employee.EmpLastname + '"></li>';
                             var people_avatar_html_container = '<ul class="addMember-items event_birthday_disp">' + people_avatar_html + '</ul>';
-                            element.find(".fc-title").append("<div class='event_header_completed'></div><div class='event_data_container'><i class='" + event_icon + " full_calendar_event_icon'></i>&nbsp;<labeL class='full_calendar_event_icon'>Birthday</label><br/>" + people_avatar_html_container + "&nbsp;<label class='full_calendar_event_text' title='" + employee.EmpName + "'>" + employee.EmpFirstname + " " + employee.EmpLastname  + "</label><br/><label class='full_calendar_event_foot_text'>" + durationHr + " hr</label></div>");
+                            element.find(".fc-title").append("<div class='event_header_completed'></div><div class='event_data_container'><i class='" + event_icon + " full_calendar_event_icon'></i>&nbsp;<labeL class='full_calendar_event_icon'>Birthday</label><br/>" + people_avatar_html_container + "&nbsp;<label class='full_calendar_event_text' title='" + employee.EmpFirstname + " " + employee.EmpLastname + "'>" + employee.EmpFirstname + " " + employee.EmpLastname + "</label><br/><label class='full_calendar_event_foot_text'>" + durationHr + " hr</label></div>");
                             break;
                         default:
                     }

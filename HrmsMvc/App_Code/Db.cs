@@ -128,9 +128,26 @@ namespace HrmsMvc
             }
         }
 
-        public static List<EmployeeModel> GetEmployeeDetails(int BlockSize, int BlockNumber)
+        public static List<EmployeeModel> GetEmployeeDetails(int BlockSize, int BlockNumber, int sortingVal)
         {
             int startIndex = (BlockNumber - 1) * BlockSize;
+            string coloumn = "EmpFirstname";
+            string sortingOrder = "asc";
+            switch (sortingVal)
+            {
+                case 1:
+                    coloumn = "EmpFirstname";
+                    sortingOrder = "asc";
+                    break;
+                case 2:
+                    coloumn = "EmpFirstname";
+                    sortingOrder = "desc";
+                    break;
+                default:
+                    coloumn = "EmpFirstname";
+                    sortingOrder = "asc";
+                    break;
+            }
 
             DataTable dt = new DataTable();
             SqlDataReader sreader = null;
@@ -140,7 +157,7 @@ namespace HrmsMvc
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
             {
                 con.Open();
-                SqlCommand scmd = new SqlCommand("SELECT COUNT(ID) FROM UserInfo WHERE UserType != 1", con);
+                SqlCommand scmd = new SqlCommand("SELECT COUNT(ID) FROM UserInfo WHERE UserType <> 1", con);
                 sreader = scmd.ExecuteReader();
                 if (sreader.HasRows)
                 {
@@ -151,7 +168,8 @@ namespace HrmsMvc
                 }
                 sreader.Close();
 
-                string SelQuery = "SELECT a.ID AS EmpID,a.UserName,a.UserType,c.Privilage AS UserRole,b.EmpFirstname,b.EmpLastname,b.EmpGender,b.EmpPhone,b.EmpEmail,b.EmpDob,b.EmpPhotoPath,ed.Designation,ed.ID AS DesigType FROM EmployeeInfo b INNER JOIN UserInfo a ON a.ID=b.EmpId INNER JOIN UserPrivilages c ON (a.UserType=c.Id AND a.UserType != 1) INNER JOIN EmpDesignation ed ON b.EmpDesignation = ed.ID ORDER BY b.EmpFirstname ASC OFFSET @startIndex ROWS FETCH NEXT @BlockSize ROWS ONLY";
+                string SelQuery = "SELECT a.ID AS EmpID,a.UserName,a.UserType,c.Privilage AS UserRole,b.EmpFirstname,b.EmpLastname,b.EmpGender,b.EmpPhone,b.EmpEmail,b.EmpDob,b.EmpPhotoPath,ed.Designation,ed.ID AS DesigType FROM EmployeeInfo b INNER JOIN UserInfo a ON a.ID=b.EmpId INNER JOIN UserPrivilages c ON (a.UserType=c.Id AND a.UserType != 1) INNER JOIN EmpDesignation ed ON b.EmpDesignation = ed.ID" +
+                    " ORDER BY b." + coloumn + " " + sortingOrder + " OFFSET @startIndex ROWS FETCH NEXT @BlockSize ROWS ONLY";
                 SqlDataAdapter da = new SqlDataAdapter(SelQuery, con);
                 da.SelectCommand.Parameters.AddWithValue("startIndex", startIndex);
                 da.SelectCommand.Parameters.AddWithValue("BlockSize", BlockSize);
@@ -190,7 +208,7 @@ namespace HrmsMvc
 
         public static DataTable getEmployeeFullInfo()
         {
-            string SelQuery = "SELECT EmpId,EmpFirstname,EmpLastname,EmpDob,EmpPhotoPath,EmpGender FROM EmployeeInfo";
+            string SelQuery = "SELECT EmpId,EmpFirstname,EmpLastname,EmpDob,EmpPhotoPath,EmpGender FROM EmployeeInfo INNER JOIN UserInfo ON EmployeeInfo.EmpId = UserInfo.Id WHERE UserInfo.UserType <> 1";
             SqlDataAdapter da = new SqlDataAdapter(SelQuery, ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -497,7 +515,7 @@ namespace HrmsMvc
                 EmployeeModel em = null;
                 SqlDataAdapter da = null;
                 searchText = "'%" + searchText + "%'";
-                searchText = "SELECT ei.EmpId AS EmpID,EmpFirstname,EmpLastname,EmpGender,EmpPhotoPath,ed.Designation FROM EmployeeInfo ei INNER JOIN EmpDesignation ed ON ei.EmpDesignation = ed.ID WHERE EmpFirstname LIKE " + searchText + " OR EmpLastname LIKE " + searchText;
+                searchText = "SELECT ei.EmpId AS EmpID,EmpFirstname,EmpLastname,EmpGender,EmpPhotoPath,ed.Designation FROM EmployeeInfo ei INNER JOIN EmpDesignation ed ON ei.EmpDesignation = ed.ID INNER JOIN UserInfo ui ON ei.EmpId = ui.Id WHERE ui.UserType <> 1 AND (ei.EmpFirstname LIKE " + searchText + " OR ei.EmpLastname LIKE " + searchText + " )";
                 da = new SqlDataAdapter(searchText, ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
                 da.Fill(dt);
 
@@ -766,7 +784,7 @@ namespace HrmsMvc
 
                 if (userType == 1)
                 {
-                    da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE CONVERT(date,FromDate) BETWEEN @startDate AND @endDate AND eli.Status != 3 ORDER BY eli.FromDate DESC", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
+                    da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID,eli.LeaveSessionType FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE CONVERT(date,FromDate) BETWEEN @startDate AND @endDate AND eli.Status != 3 ORDER BY eli.FromDate DESC", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
                     da.SelectCommand.Parameters.AddWithValue("startDate", lv._fromdate);
                     da.SelectCommand.Parameters.AddWithValue("endDate", lv._todate);
                 }
@@ -774,11 +792,11 @@ namespace HrmsMvc
                 {
                     if (IsReport)
                     {
-                        da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE eli.EmpId=@EmpId AND eli.Status IN (1,2) AND ((FromDate BETWEEN @FromDate AND @ToDate) OR (ToDate BETWEEN @FromDate AND @ToDate)) ORDER BY eli.FromDate", con);
+                        da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID,eli.LeaveSessionType FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE eli.EmpId=@EmpId AND eli.Status IN (1,2) AND ((FromDate BETWEEN @FromDate AND @ToDate) OR (ToDate BETWEEN @FromDate AND @ToDate)) ORDER BY eli.FromDate", con);
                     }
                     else
                     {
-                        da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE eli.EmpId=@EmpId AND ((FromDate BETWEEN @FromDate AND @ToDate) OR (ToDate BETWEEN @FromDate AND @ToDate)) ORDER BY eli.FromDate OFFSET @startIndex ROWS FETCH NEXT @blockSize ROWS ONLY", con);
+                        da = new SqlDataAdapter("SELECT eli.EmpId,eli.FromDate,eli.ToDate,lt.Type,eli.Status,eli.Comments,eli.Id As LeaveID,eli.DurationType,lt.Id AS LeaveTypeID,eli.LeaveSessionType FROM EmployeeLeaveInfo eli INNER JOIN LeaveType lt ON eli.LeaveType=lt.Id WHERE eli.EmpId=@EmpId AND ((FromDate BETWEEN @FromDate AND @ToDate) OR (ToDate BETWEEN @FromDate AND @ToDate)) ORDER BY eli.FromDate OFFSET @startIndex ROWS FETCH NEXT @blockSize ROWS ONLY", con);
                         da.SelectCommand.Parameters.AddWithValue("startIndex", startIndex);
                         da.SelectCommand.Parameters.AddWithValue("blockSize", BlockSize);
                     }
@@ -808,6 +826,7 @@ namespace HrmsMvc
                     li._leavedurationtype = row["DurationType"].ToString();
                     li._leaveDurTypeInt = (li._leavedurationtype.Equals("Full Day")) ? 1 : 2;
                     li._comments = row["Comments"].ToString();
+                    li._leaveHalfDaySession = Convert.ToInt32(row["LeaveSessionType"].ToString());
 
                     DateTime fd = Convert.ToDateTime(li._fromdate.ToString());
                     DateTime td = Convert.ToDateTime(li._todate.ToString());
@@ -855,10 +874,17 @@ namespace HrmsMvc
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("AddLeaveInfo", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@year", DateTime.Now.Year);
-                    cmd.ExecuteNonQuery();
+                    SqlCommand cmd1 = new SqlCommand("SELECT ID FROM LeaveStatistics WHERE Year = @year", con);
+                    cmd1.Parameters.AddWithValue("year", DateTime.Now.Year);
+                    int id = Convert.ToInt32(cmd1.ExecuteScalar());
+
+                    if (id <= 0)
+                    {
+                        cmd1 = new SqlCommand("AddLeaveInfo", con);
+                        cmd1.CommandType = CommandType.StoredProcedure;
+                        cmd1.Parameters.AddWithValue("@year", DateTime.Now.Year);
+                        cmd1.ExecuteNonQuery();
+                    }
                     con.Close();
                 }
             }
@@ -867,8 +893,10 @@ namespace HrmsMvc
             }
         }
 
-        public static string AddLeave(LeaveModel lm)
+        public static GenericCallbackModel AddLeave(LeaveModel lm)
         {
+            string returnStr = null;
+            int leaveId = 0;
             try
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
@@ -879,8 +907,6 @@ namespace HrmsMvc
                     int status = 1;
 
                     SqlCommand scmd = new SqlCommand("SELECT Id FROM EmployeeLeaveInfo WHERE FromDate = '" + lm._fromdate + "' AND ToDate = '" + lm._todate + "' AND EmpId = @empId AND LeaveType = @lvType AND Status NOT IN (3,-1) ", con);
-                    //scmd.Parameters.AddWithValue("fromDate", lm._fromdate);
-                    //scmd.Parameters.AddWithValue("toDate", lm._todate);
                     scmd.Parameters.AddWithValue("empId", lm.EmpID);
                     scmd.Parameters.AddWithValue("lvType", lm._leaveType);
 
@@ -896,22 +922,29 @@ namespace HrmsMvc
                     if (existId > 0)
                     {
                         con.Close();
-                        return "EXISTS";
+                        returnStr = "EXISTS";
                     }
                     else
                     {
                         try
                         {
-                            SqlCommand cmd2 = new SqlCommand("INSERT INTO EmployeeLeaveInfo VALUES(@empId,@fromdate,@todate,@leaveType,@status,@comments,@leavedurationtype)", con);
+                            SqlCommand cmd2 = new SqlCommand("AddEmployeeLeave", con);
+                            cmd2.CommandType = CommandType.StoredProcedure;
+                            cmd2.Parameters.AddWithValue("@empId", lm.EmpID);
+                            cmd2.Parameters.AddWithValue("@fromdate", lm._fromdate);
+                            cmd2.Parameters.AddWithValue("@todate", lm._todate);
+                            cmd2.Parameters.AddWithValue("@leaveType", lm._leaveType);
+                            cmd2.Parameters.AddWithValue("@status", status);
+                            cmd2.Parameters.AddWithValue("@comments", (lm._comments != null) ? lm._comments : "");
+                            cmd2.Parameters.AddWithValue("@leavedurationtype", lm._leavedurationtype);
+                            cmd2.Parameters.AddWithValue("@calendarEntryId", 0);
+                            cmd2.Parameters.AddWithValue("@leaveId", 0);
+                            cmd2.Parameters.AddWithValue("@leaveSessionType", lm._leaveHalfDaySession);
 
-                            cmd2.Parameters.AddWithValue("empId", lm.EmpID);
-                            cmd2.Parameters.AddWithValue("fromdate", lm._fromdate);
-                            cmd2.Parameters.AddWithValue("todate", lm._todate);
-                            cmd2.Parameters.AddWithValue("leaveType", lm._leaveType);
-                            cmd2.Parameters.AddWithValue("status", status);
-                            cmd2.Parameters.AddWithValue("comments", lm._comments);
-                            cmd2.Parameters.AddWithValue("leavedurationtype", lm._leavedurationtype);
+                            cmd2.Parameters["@leaveId"].Direction = ParameterDirection.Output;
                             cmd2.ExecuteNonQuery();
+                            leaveId = Convert.ToInt32(cmd2.Parameters["@leaveId"].Value.ToString());
+
                             con.Close();
                             flag = true;
                         }
@@ -924,31 +957,33 @@ namespace HrmsMvc
                         {
                             UpdateLeaveStatistics(lm);
                             con.Close();
-                            return "OK";
+                            returnStr = "OK";
                         }
                         else
                         {
                             con.Close();
-                            return "ERROR";
+                            returnStr = "ERROR";
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                return "ERROR";
+                returnStr = null;
             }
+            return new GenericCallbackModel { ID = leaveId, Message = returnStr };
         }
 
-        public static string UpdateLeave(LeaveModel lm, int userType)
+        public static GenericCallbackModel UpdateLeave(LeaveModel lm, int userType)
         {
+            string rtrnStr = null;
+            int assc_task_id = 0;
             try
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
                 {
                     con.Open();
                     int existId = 0;
-                    string rtrnStr = "";
                     ArrayList rtrnArrExis = new ArrayList();
 
                     if (userType != 1)
@@ -987,7 +1022,7 @@ namespace HrmsMvc
                         if (!lvDupFlag)
                         {
                             DataTable dt = new DataTable();
-                            SqlDataAdapter da = new SqlDataAdapter("SELECT [FromDate],[ToDate],[DurationType] FROM EmployeeLeaveInfo WHERE [EmpId] =@empId AND [Id] = @lvId ", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
+                            SqlDataAdapter da = new SqlDataAdapter("SELECT [FromDate],[ToDate],[DurationType],[CalendarEntryId] FROM EmployeeLeaveInfo WHERE [EmpId] =@empId AND [Id] = @lvId ", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
                             da.SelectCommand.Parameters.AddWithValue("empId", lm.EmpID);
                             da.SelectCommand.Parameters.AddWithValue("lvId", lm._lvId);
                             da.Fill(dt);
@@ -997,16 +1032,15 @@ namespace HrmsMvc
                                 DateTime todt = new DateTime();
                                 string LvDurType = "";
 
-                                foreach (DataRow row in dt.Rows)
-                                {
-                                    frmdt = Convert.ToDateTime(row[0].ToString());
-                                    todt = Convert.ToDateTime(row[1].ToString());
-                                    LvDurType = row[2].ToString().TrimEnd();
-                                }
+                                frmdt = Convert.ToDateTime(dt.Rows[0]["FromDate"].ToString());
+                                todt = Convert.ToDateTime(dt.Rows[0]["ToDate"].ToString());
+                                LvDurType = dt.Rows[0]["DurationType"].ToString().TrimEnd();
+                                assc_task_id = Convert.ToInt32(dt.Rows[0]["CalendarEntryId"].ToString());
+
                                 rtrnArrExis = CalculateLeaveStatistics(frmdt, todt, lm._strLvType, LvDurType, lm.EmpID);
 
-                                string query = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype WHERE [Id] = @lvId";
-                                string query1 = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,Status = @status WHERE [Id] = @lvId";
+                                string query = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,LeaveSessionType = @leaveHalfDaySession WHERE [Id] = @lvId";
+                                string query1 = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,Status = @status,LeaveSessionType = @leaveHalfDaySession WHERE [Id] = @lvId";
                                 SqlCommand cmd2 = null;
 
                                 cmd2 = new SqlCommand((lm._cancelled) ? query1 : query, con);
@@ -1014,6 +1048,7 @@ namespace HrmsMvc
                                 cmd2.Parameters.AddWithValue("todate", lm._todate);
                                 cmd2.Parameters.AddWithValue("comments", lm._comments);
                                 cmd2.Parameters.AddWithValue("leavedurationtype", lm._leavedurationtype);
+                                cmd2.Parameters.AddWithValue("leaveHalfDaySession", lm._leaveHalfDaySession);
                                 if (lm._cancelled)
                                 {
                                     cmd2.Parameters.AddWithValue("status", 3);
@@ -1034,21 +1069,19 @@ namespace HrmsMvc
                             }
                         }
                     }
-
                     #region Changing Status by Admin.
                     else
                     {
 
                     }
                     #endregion
-
-                    return rtrnStr;
                 }
             }
             catch (Exception ex)
             {
-                return "ERROR";
+                rtrnStr = "ERROR";
             }
+            return new GenericCallbackModel { ID = lm._lvId, Message = rtrnStr, SecID = assc_task_id };
         }
 
         public static ArrayList CalculateLeaveStatistics(DateTime from, DateTime to, string leaveType, string LeaveDurationType, int empId)
@@ -1431,7 +1464,7 @@ namespace HrmsMvc
             return dt;
         }
 
-        public static int taskSave(CalendarEventInfo event_info, CalendarEventLog event_log)
+        public static int taskSave(CalendarEventInfo event_info, CalendarEventLog event_log, LeaveModel lm = null)
         {
             int task_id = 0;
             if (event_info != null)
@@ -1452,6 +1485,8 @@ namespace HrmsMvc
                         cmd.Parameters.AddWithValue("@start_date", event_info.event_dates[0].start_date);
                         cmd.Parameters.AddWithValue("@end_date", event_info.event_dates[0].end_date);
                         cmd.Parameters.AddWithValue("@employee_id", string.Join(",", event_info.employee.Select(n => n.ToString()).ToArray()));
+                        cmd.Parameters.AddWithValue("@isLeaveTask", (lm != null) ? true : false);
+                        cmd.Parameters.AddWithValue("@leaveId", (lm != null) ? lm._lvId : 0);
 
                         cmd.Parameters["@task_id"].Direction = ParameterDirection.Output;
                         cmd.ExecuteNonQuery();
@@ -1527,7 +1562,7 @@ namespace HrmsMvc
             return archive;
         }
 
-        public static int taskEdit(CalendarEventInfo event_info, CalendarEventLog event_log)
+        public static int taskEdit(CalendarEventInfo event_info, CalendarEventLog event_log, LeaveModel lm = null)
         {
             int task_id = 0;
             if (event_info != null)

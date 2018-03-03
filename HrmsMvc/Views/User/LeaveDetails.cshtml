@@ -12,10 +12,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
-
     <link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/responsive.dataTables.min.css" rel="stylesheet" />
-
     <script src="~/Scripts/jquery.dataTables.min.js" type="text/javascript"></script>
     <script src="~/Scripts/dataTables.responsive.min.js"></script>
     <script>
@@ -86,6 +84,20 @@
                     </div>
                 </div>
                 <br />
+                <div class="row hidden" id="lvSessionTypDiv">
+                    <div class="col-md-3 col-lg-3">
+                        @Html.Label("Session", new { @class = "control-label labelClass hrms-required-field" })
+                    </div>
+                    <div class="col-md-8 col-lg-5">                        
+                        <select class="form-control input-field" id="LeaveSessionDropDown">
+                            <option value="0">Select a session</option>
+                            <option value="1">Morning session (09.00 AM to 1.00 PM)</option>
+                            <option value="2">Afternoon session (01.00 PM to 06.00 PM)</option>
+                        </select>
+                        @Html.Label("Please Select a session !!", new { id = "ErrLvSession", @class = "text-danger errLabel" })
+                    </div>
+                </div>
+                <br />
                 <div class="row">
                     <div class="col-md-3 col-lg-3">
                         @Html.Label("Notes  ", new { @class = "control-label labelClass" })
@@ -103,7 +115,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade col-xs-12 col-md-12 col-lg-12 col-sm-12" id="LeaveStatiDiv" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content" style="height:auto">
@@ -111,7 +122,6 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3 class="modal-title text-center">Leave Details</h3>
                 </div>
-
                 <div class="modal-body" style="min-height:150px">
                     <div class="row" id="statiDiv">
                         <div id="LoadPage1" class="text-center col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center">

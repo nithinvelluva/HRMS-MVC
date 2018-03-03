@@ -114,7 +114,7 @@ namespace HrmsMvc.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult ProfileDetails(string Id, string firstName, string lastName,string dob, string gender, string role, string username, string cnfPwd, string email, string phone)
+        public JsonResult ProfileDetails(string Id, string firstName, string lastName, string dob, string gender, string role, string username, string cnfPwd, string email, string phone)
         {
             Regex RegexEmail = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
             Regex mobRgx = new Regex(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$");
@@ -611,14 +611,27 @@ namespace HrmsMvc.Controllers
                             lm._strLvType = LeaveTypeStr;
                             lm.RtrnArry = rtrnArr;
 
-                            if (leave_model._lvId <= 0)
+                            if (leave_model._lvId <= 0)//Add leave
                             {
-                                rtrnStr = Db.AddLeave(lm);
+                                GenericCallbackModel gcm = new GenericCallbackModel();
+                                gcm = Db.AddLeave(lm);
+                                rtrnStr = (gcm != null) ? gcm.Message : null;
+                                lm._lvId = (gcm != null) ? gcm.ID : 0;
+                                if (lm._lvId > 0)
+                                {
+                                    AddLeaveCalendarEntry(lm);
+                                }
                             }
-                            else
+                            else//Edit leave
                             {
-                                //lm._lvId = Convert.ToInt32(leaveId);
-                                rtrnStr = Db.UpdateLeave(lm, leave_model.Usertype);
+                                GenericCallbackModel gcm = new GenericCallbackModel();
+                                gcm = Db.UpdateLeave(lm, leave_model.Usertype);
+                                rtrnStr = (gcm != null) ? gcm.Message : null;
+                                lm._calendarEntryId = (gcm != null) ? gcm.SecID : 0;
+                                if (lm._calendarEntryId > 0)
+                                {
+                                    AddLeaveCalendarEntry(lm);
+                                }
                             }
                         }
                     }
@@ -629,6 +642,77 @@ namespace HrmsMvc.Controllers
                 rtrnStr = null;
             }
             return Json(new { data = rtrnStr, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
+        }
+
+        private int AddLeaveCalendarEntry(LeaveModel lm)
+        {
+            int row_id = 0;
+            if (lm != null)
+            {
+                CalendarEventInfo event_info = new CalendarEventInfo();
+                event_info.event_type = 1;
+                event_info.status = 1;
+                List<CalendarEventDate> event_dates = new List<CalendarEventDate>();
+                event_dates.Add(
+                    new CalendarEventDate
+                    {
+                        start_date = lm._fromdate,
+                        end_date = lm._todate
+                    });
+                switch (lm._leavedurationtype)
+                {
+                    case "Full Day":
+                        event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
+                        event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
+                        break;
+                    case "Half Day":
+                        switch (lm._leaveHalfDaySession)
+                        {
+                            case 1://morning session
+                                event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
+                                event_dates[0].end_date = event_dates[0].end_date + " " + "13:00:00";
+                                break;
+                            case 2://afternoon session
+                                event_dates[0].start_date = event_dates[0].start_date + " " + "14:00:00";
+                                event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
+                                break;
+                            default:
+                                event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
+                                event_dates[0].end_date = event_dates[0].end_date + " " + "13:00:00";
+                                break;
+                        }
+                        break;
+                    default:
+                        event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
+                        event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
+                        break;
+                }
+                event_info.event_dates = event_dates;
+                List<int> employee = new List<int>();
+                employee.Add(lm.EmpID);
+                event_info.employee = employee;
+                event_info.heading = "Applied for leave";
+                event_info.note = "";
+
+                CalendarEventLog event_log = new CalendarEventLog()
+                {
+                    creator_employee = new EmployeeModel()
+                    {
+                        EmpID = lm.EmpID
+                    },
+                    event_log = "Leave added."
+                };
+                if(lm._lvId <= 0)
+                {
+                    row_id = Db.taskSave(event_info, event_log, lm);
+                }
+                else
+                {
+                    event_info.Id = lm._calendarEntryId;
+                    row_id = Db.taskEdit(event_info, event_log, lm);
+                }
+            }
+            return row_id;
         }
 
         [AcceptVerbs(HttpVerbs.Post)]

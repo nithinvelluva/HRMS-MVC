@@ -66,6 +66,9 @@ $(document).ready(function () {
         else {
             $('#LeaveDurationDropDown').css('border-color', '');
             $('#ErrLvDur').hide();
+            var lvDurationTyp = $(this).val();
+            (lvDurationTyp == 2) ? $('#lvSessionTypDiv').removeClass('hidden') :
+            $('#lvSessionTypDiv').removeClass('hidden').addClass('hidden'); $('#LeaveSessionDropDown').val(0);
         }
     });
     $('#Fromdatetimepicker').on('change blur keyup paste', function () {
@@ -109,13 +112,15 @@ function HideLoad() {
 };
 function ResetValues() {
     $('#leaveBalLabel').text("0.0");
-    $('#LeaveTypeDropDown').val('');
+    $('#LeaveTypeDropDown').val("");
     $('#LvStatiImgProg').hide();
     $('#Fromdatetimepicker').val('');
     $('#Todatetimepicker').val('');
     $('#LeaveDurationDropDown').empty();
     var OptHtml = '<option value="' + 0 + '">' + "Select Leave Duration" + '</option>';
     $('#LeaveDurationDropDown').append(OptHtml);
+    $('#LeaveSessionDropDown').val(0);
+    $('#lvSessionTypDiv').removeClass('hidden').addClass('hidden');
     $('#notes').val('');
     $('.waitIconDiv').hide();
 };
@@ -183,6 +188,7 @@ function ApplyLeave() {
     var FromDate = $('#Fromdatetimepicker').val();
     var ToDate = $('#Todatetimepicker').val();
     var LvDur = $('#LeaveDurationDropDown').val();
+    var LvSession = $('#LeaveSessionDropDown').val();
     var Notes = $('#notes').val();
     var flag = false;
     if (LvType <= 0) {
@@ -205,6 +211,11 @@ function ApplyLeave() {
         $('#Errenddate').show();
         flag = true;
     }
+    if (!stringIsNull(LvDur) && 2 == LvDur && stringIsNull(LvSession)) {
+        $('#LeaveSessionDropDown').css('border-color', 'red');
+        $('#ErrLvSession').show();
+        flag = true;
+    }
     if (!flag) {
         showLoadreport("#imgProg", ".lvApplyContent");
         var StrLvTyp = $('#LeaveTypeDropDown option:selected').text();
@@ -220,9 +231,9 @@ function ApplyLeave() {
             _leaveDurTypeInt: LvDur,
             _comments: Notes ? Notes : "",
             _strLvType: StrLvTyp,
-            Usertype: userType,
             _leavedurationtype: LvDurStr,
-            _cancelled: false
+            _cancelled: false,
+            _leaveHalfDaySession: (2 == LvDur) ? LvSession : 0
         };
 
         $.ajax({

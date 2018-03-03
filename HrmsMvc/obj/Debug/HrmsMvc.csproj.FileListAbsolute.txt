@@ -151,6 +151,6 @@ F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\bin\System.Web.Razor.xml
 F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\bin\System.Web.WebPages.xml
 F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\bin\System.Web.WebPages.Deployment.xml
 F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\bin\System.Web.WebPages.Razor.xml
-F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\obj\Debug\HrmsMvc.csprojResolveAssemblyReference.cache
 F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\obj\Debug\HrmsMvc.dll
 F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\obj\Debug\HrmsMvc.pdb
+F:\Projects\HRMS MVC\HrmsMvc\HrmsMvc\obj\Debug\HrmsMvc.csprojResolveAssemblyReference.cache

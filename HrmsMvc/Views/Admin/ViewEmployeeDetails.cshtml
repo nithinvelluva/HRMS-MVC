@@ -8,6 +8,9 @@
         <a href="/admin/users" title="Back to users"><i class="fa fa-chevron-circle-left fa-3x"></i></a>
     </div>
     <div class="row">
+        <div class="WaitdivPage row text-center" id="loadingDivEdit">
+            <i class="fa fa-refresh fa-spin fa-2x fa-fw" id="waitIconEmpEdit"></i>
+        </div>
         <div class="col-md-8">
             <div class="card">
                 <div class="header">
@@ -21,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="labelclass hrms-required-field">First name</label>
                                     <input class="form-control inputField" id="EmployeeFirstName" name="EmpName"
-                                           placeholder="Employee name" required maxlength=20 disabled value="@Model.EmpFirstname" />
+                                           placeholder="First name" required maxlength=20 disabled value="@Model.EmpFirstname" />
                                     <label class="text-danger errLabel" id="lblempfirstnameEdit">Enter Employee First Name</label>
                                 </div>
                             </div>
@@ -29,7 +32,7 @@
                                 <div class="form-group">
                                     <label class="labelclass">Last name</label>
                                     <input class="form-control inputField" id="EmployeeLastName" name="EmpName"
-                                           placeholder="Employee name" required maxlength=20 disabled value="@Model.EmpLastname" />
+                                           placeholder="Last name" maxlength=20 disabled value="@Model.EmpLastname" />
                                     <label class="text-danger errLabel" id="lblemplastnameEdit">Enter Employee Last Name</label>
                                 </div>
                             </div>
