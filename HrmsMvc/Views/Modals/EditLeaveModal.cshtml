@@ -1,0 +1,117 @@
+﻿@{
+    SelectList leaveDurList = Page.leaveDurList;
+    SelectList leaveTypeList = Page.leaveTypeList;
+}
+<div class="modal fade" id="EditLeaveModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title text-center">Leave Details</h3>
+            </div>
+            <div id="LoadPageLvEdit" class="row text-center waitIconDivRprt" style="display:none">
+                <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgLvEdit"></i>
+            </div>
+            <div class="modal-body">
+                @Html.Hidden("LeaveId")
+                <div class="lvEditView">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5 class="hrms-required-field">From Date</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="LvstartDateLabel" placeholder="From Date" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5 class="hrms-required-field">To Date</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="LvtoDateLabel" placeholder="To Date" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5 class="top-margin">Leave Status</h5>
+                        </div>
+                        <div class="col-lg-6 top-margin">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <label id="leaveStatusLabel"></label>
+                                </div>
+                                @if (@Model.Usertype != 1)
+                                {
+                                    <div class="col-lg-8" id="lv_cancel_div" hidden>
+                                        <input type="checkbox" id="lv_cancel_chkBx" disabled="disabled" title="Cancel Leave" />
+                                        <label for="lv_cancel_chkBx">Cancel</label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-lg-8">
+                                        <div class="row">
+                                            <div class="col-lg-3" title="Approve"><i class="fa fa-2x fa-check-square cursor"></i></div>
+                                            <div class="col-lg-3" title="Reject"><i class="fa fa-2x fa-times-circle cursor"></i></div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5 class="hrms-required-field">Leave Type</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            @Html.DropDownList("leaveTypeLabel", leaveTypeList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5 class="hrms-required-field">Duration Type</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            @Html.DropDownList("LvDurTypLabel", leaveDurList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
+                        </div>
+                    </div>
+                    <div class="row hidden" id="lvSessionTypDiv">
+                        <div class="col-lg-6">
+                            <h5 class="hrms-required-field">Session</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" id="LeaveSessionDropDown">
+                                <option value="0">Select a session</option>
+                                <option value="1">Morning session (09.00 AM to 1.00 PM)</option>
+                                <option value="2">Afternoon session (01.00 PM to 06.00 PM)</option>
+                            </select>
+                            @Html.Label("Please Select a session !!", new { id = "ErrLvSession", @class = "text-danger errLabel" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5>Comments</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <textarea id="cmntsArea" class="form-control txt-area" placeholder="Comments" maxlength="3992"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row modal-footer">
+                    <div class="col-lg-12 text-center">
+                        @if (@Model.Usertype != 1)
+                        {
+                            <input type="submit" value="Edit" class="btn btn-info btn-fill" id="LeaveEditBtn" onclick="LeaveEditClick()" />
+                            <input type="button" value="Update" style="display:none" id="LeaveUpdateBtn" class="btn btn-info btn-fill" onclick="LeaveUpdateClick()" />
+                            <i class="fa fa-envelope fa-2x cursor" aria-hidden="true" id="cntctAdmin" data-toggle="modal" data-target="#SentLeaveQueryModal"
+                               title="Contact Admin"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

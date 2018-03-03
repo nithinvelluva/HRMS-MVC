@@ -467,7 +467,7 @@ function PopulateLeaveReportTable() {
                     statusToolTip = result["statusToolTip"];
                     IsEdit = result["IsEdit"];
                     IsRejected = result["IsRejected"];
-                    return '<input type="button" data-toggle="modal" data-target="#EditLeaveModal" title="View Details" value="View" class="btn btn-primary btn-fill ViewLeaveDetails" data-IsCancel = ' + row["_cancelled"] + ' data-IsRejected = ' + IsRejected + ' data-IsEdit=' + IsEdit + ' data-empid=' + empId + ' data-empname="' + empName + '" data-fromDate="' + row["_fromdate"] + '" data-toDate="' + row["_todate"] + '" data-LeaveType="' + row["_strLvType"] + '" data-DurationType="' + row["_leavedurationtype"] + '" data-lvDurTypint="' + row["_leaveDurTypeInt"] + '" data-LeaveStatus="' + statusToolTip + '" data-leaveTypeInt="' + row["_leaveType"] + '" data-commnets="' + row["_comments"] + '"  data-id="' + row["_lvId"] + '" data-lvSessionTyp="' + row["_leaveHalfDaySession"] + '" />'
+                    return '<input type="button" data-toggle="modal" data-target="#EditLeaveModal" title="View Details" value="View" class="btn btn-primary btn-fill ViewLeaveDetails" data-id="' + row["_lvId"] + '" />'
                 },
                 "targets": 5
             },

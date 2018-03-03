@@ -400,6 +400,12 @@
     background: #f88c0d;
 }
 
+.birthday-bg{
+    background:#f2f600;
+}
+.red-bg{
+    background:#ff0037;
+}
 .blue-icon {
     color: #009cf6 !important;
 }
@@ -421,6 +427,13 @@
     height: 90px;
     border: #000;
     cursor: pointer;
+}
+
+.full_calendar_event_other {
+    height: 60px;
+    border: #000;
+    cursor: pointer;
+    margin-bottom:5px;
 }
 
 .full_calendar_event_icon {
@@ -480,7 +493,17 @@
     border: 2px solid #69bc6c;
     padding-bottom: 5px;
 }
-
+.event_header_birthday{
+    /*margin-bottom: 5px;*/
+    background-color: #f2f600;
+    border: 2px solid #f2f600;
+    /*padding-bottom: 5px;*/
+}
+.leave_event_header{
+    background-color: #ff0037;
+    border: 2px solid #ff0037;
+    /*padding-bottom: 5px;*/
+}
 .load_div {
     position: fixed;
     left: 55%;

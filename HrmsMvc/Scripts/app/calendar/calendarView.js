@@ -25,44 +25,6 @@ function modalClose() {
 function calendarModalSetDate(date) {
     calendarGoToDate = date;
 };
-function calendarAjaxPOSTRequest(url, params, callback, callback_params) {
-    params = (params) ? params : {};
-    $.ajax({
-        url: url,
-        type: "POST",
-        contentType: "application/json",
-        datatype: "json",
-        data: JSON.stringify(params),
-        success: function (response) {
-            if (callback) {
-                callback(response, callback_params);
-            }
-        },
-        error: function (response) {
-            eventLoading(false);
-            eventPopupLoading(false);
-        }
-    });
-};
-function calendarAjaxGETRequest(url, params, callback, callback_params) {
-    params = (params) ? params : {};
-    $.ajax({
-        url: url,
-        type: "GET",
-        contentType: "application/json",
-        datatype: "json",
-        data: params,
-        success: function (response) {
-            if (callback) {
-                callback(response, callback_params);
-            }
-        },
-        error: function (response) {
-            eventLoading(false);
-            eventPopupLoading(false);
-        }
-    });
-};
 function manageEvent() {
     resetEventPopupValues();
     $('#task_status_div').hide();
@@ -144,7 +106,7 @@ function fetchEventsCallback(response) {
 
 
                 switch (event_type) {
-                    case 1:
+                    case 1://tasks
                         switch (response.data[i].status) {
                             case 1: event_cell_color = '#c9e5f9';//Assigned
                                 break;
@@ -157,8 +119,11 @@ function fetchEventsCallback(response) {
                             default:
                         }
                         break;
-                    case 2:
-                        event_cell_color = '#cfeccf';
+                    case 2://birthday events
+                        event_cell_color = '#f2f600';
+                        break;
+                    case 3://leaves
+                        event_cell_color = '#ff0037';
                         break;
                     default:
                 }
@@ -176,9 +141,10 @@ function fetchEventsCallback(response) {
                     color: event_cell_color,
                     event_employees: event_employees,
                     editable: false,
-                    className: 'full_calendar_event_class',
+                    className: (event_type == 1) ? 'full_calendar_event_class' : 'full_calendar_event_other',
                     is_editable: response.data[i].is_edit,
-                    status: response.data[i].status
+                    status: response.data[i].status,
+                    is_leave_event: response.data[i].is_leave_event,
                 };
 
                 full_calendar_obj.fullCalendar('renderEvent', event, true);
@@ -625,7 +591,7 @@ $(document).ready(function () {
                     //monthLabelOnChange();
                 },
                 eventClick: function (calEvent, jsEvent, view) {
-                    if (calEvent.is_editable) {
+                    if (calEvent.is_editable && !calEvent.is_leave_event) {
                         eventPopupLoading(true);
                         $('#task_status_div').show();
                         $('#eventPopupDiv').modal('show');
@@ -639,6 +605,15 @@ $(document).ready(function () {
                         url = '/calendar/getTreeViewFiles';
                         callback = JStreeRender;
                         calendarAjaxGETRequest(url, params, callback);
+                    }
+                    else if (calEvent.is_editable && calEvent.is_leave_event) {
+                        IsCalendarEdit = true;
+                        leaveEditPopupLoading(true);
+                        var url = "/user/leaveDetailsFetch";
+                        var params = { leave_event_id: calEvent.id, IsCalendarEdit: true };
+                        var callback = leaveDetailsFetchCallback;
+                        calendarAjaxGETRequest(url, params, callback);
+                        sel_event_id = calEvent.id;
                     }
                 },
                 eventRender: function (event, element, view) {
@@ -684,7 +659,16 @@ $(document).ready(function () {
                             var userPhotoPath = (employee.UserPhotoPath) ? "/Content/UserIcons/" + employee.UserPhotoPath : ("M" == (employee.Gender).trim()) ? "/Content/Images/male-avatar.png" : "/Content/Images/female-avatar.png";
                             var people_avatar_html = '<li class="addMember-item"><img class="employee-select-avatar-sub" src="' + userPhotoPath + '" title="' + employee.EmpFirstname + " " + employee.EmpLastname + '"></li>';
                             var people_avatar_html_container = '<ul class="addMember-items event_birthday_disp">' + people_avatar_html + '</ul>';
-                            element.find(".fc-title").append("<div class='event_header_completed'></div><div class='event_data_container'><i class='" + event_icon + " full_calendar_event_icon'></i>&nbsp;<labeL class='full_calendar_event_icon'>Birthday</label><br/>" + people_avatar_html_container + "&nbsp;<label class='full_calendar_event_text' title='" + employee.EmpFirstname + " " + employee.EmpLastname + "'>" + employee.EmpFirstname + " " + employee.EmpLastname + "</label><br/><label class='full_calendar_event_foot_text'>" + durationHr + " hr</label></div>");
+                            element.find(".fc-title").append("<div class='event_header_birthday'></div><div class='event_data_container'><i class='" + event_icon + " full_calendar_event_icon'></i>&nbsp;<labeL class='full_calendar_event_icon'>Birthday</label><br/>" + people_avatar_html_container + "&nbsp;<label class='full_calendar_event_text' title='" + employee.EmpFirstname + " " + employee.EmpLastname + "'>" + employee.EmpFirstname + " " + employee.EmpLastname + "</label></div>");
+                            break;
+                        case 3:
+                            event_icon = 'fa fa-user-times';
+                            var durationHr = event.duration.split(':')[0];
+                            var employee = event.event_employees[0];
+                            var userPhotoPath = (employee.UserPhotoPath) ? "/Content/UserIcons/" + employee.UserPhotoPath : ("M" == (employee.Gender).trim()) ? "/Content/Images/male-avatar.png" : "/Content/Images/female-avatar.png";
+                            var people_avatar_html = '<li class="addMember-item"><img class="employee-select-avatar-sub" src="' + userPhotoPath + '" title="' + employee.EmpFirstname + " " + employee.EmpLastname + '"></li>';
+                            var people_avatar_html_container = '<ul class="addMember-items event_birthday_disp">' + people_avatar_html + '</ul>';
+                            element.find(".fc-title").append("<div class='leave_event_header'></div><div class='event_data_container'><i class='" + event_icon + " full_calendar_event_icon'></i>&nbsp;<labeL class='full_calendar_event_icon'>Leave</label><br/>" + people_avatar_html_container + "&nbsp;<label class='full_calendar_event_text' title='" + employee.EmpFirstname + " " + employee.EmpLastname + "'>" + employee.EmpFirstname + " " + employee.EmpLastname + "</label></div>");
                             break;
                         default:
                     }

@@ -1312,6 +1312,76 @@ namespace HrmsMvc
             }
         }
 
+        public static LeaveModel leaveDetailsFetch(int leave_event_id,bool IsCalendarEdit)
+        {
+            LeaveModel li = null;
+            try
+            {
+                DataTable dt = new DataTable();
+                SqlDataAdapter da = null;
+                if (IsCalendarEdit)
+                {
+                    da = new SqlDataAdapter("SELECT * FROM EmployeeLeaveInfo WHERE [CalendarEntryId] = @leave_event_id", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
+                }
+                else
+                {
+                    da = new SqlDataAdapter("SELECT * FROM EmployeeLeaveInfo WHERE [Id] = @leave_event_id", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
+                }
+                    da.SelectCommand.Parameters.AddWithValue("leave_event_id", leave_event_id);
+                da.Fill(dt);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    li = new LeaveModel();
+                    li._lvId = Convert.ToInt32(dt.Rows[0]["Id"].ToString());
+                    li.EmpID = Convert.ToInt32(dt.Rows[0]["EmpId"].ToString());
+                    li._fromdate = dt.Rows[0]["FromDate"].ToString().Split(' ')[0];
+                    li._todate = dt.Rows[0]["ToDate"].ToString().Split(' ')[0];
+                    li._leaveType = !string.IsNullOrEmpty(dt.Rows[0]["LeaveType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["LeaveType"].ToString()) : 0;                    
+                    li._leavedurationtype = dt.Rows[0]["DurationType"].ToString();
+                    li._leaveDurTypeInt = (li._leavedurationtype.Equals("Full Day")) ? 1 : 2;
+                    li._comments = dt.Rows[0]["Comments"].ToString();
+                    li._leaveHalfDaySession = Convert.ToInt32(dt.Rows[0]["LeaveSessionType"].ToString());
+
+                    DateTime fd = Convert.ToDateTime(li._fromdate.ToString());
+                    DateTime td = Convert.ToDateTime(li._todate.ToString());              
+
+                    switch ((!string.IsNullOrEmpty(dt.Rows[0]["Status"].ToString())) ? Convert.ToInt32(dt.Rows[0]["Status"].ToString()) : 0)
+                    {
+                        case -1://rejected state
+                            li._status = false;
+                            li._rejected = true;
+                            li._cancelled = false;
+                            li._leaveStatus = "REJECTED";
+                            break;
+                        case 1://pending state
+                            li._status = false;
+                            li._rejected = false;
+                            li._cancelled = false;
+                            li._leaveStatus = "PENDING";
+                            break;
+                        case 2://accepted state    
+                            li._status = true;
+                            li._rejected = false;
+                            li._cancelled = false;
+                            li._leaveStatus = "APPROVED";
+                            break;
+                        case 3: //cancelled state               
+                            li._status = false;
+                            li._rejected = false;
+                            li._cancelled = true;
+                            li._leaveStatus = "CANCELLED";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                li = null;
+            }
+            return li;
+        }
         #endregion
 
         #region Manage calendar operations
@@ -1370,6 +1440,7 @@ namespace HrmsMvc
                 DataColumn duration = dt.Columns.Add("duration", typeof(String));
                 DataColumn is_view = dt.Columns.Add("is_view", typeof(bool));
                 DataColumn is_edit = dt.Columns.Add("is_edit", typeof(bool));
+                DataColumn is_leave_event = dt.Columns.Add("is_leave_event", typeof(bool));
 
                 Dictionary<string, object> row;
                 foreach (DataRow dr in dt.Rows)
@@ -1430,6 +1501,7 @@ namespace HrmsMvc
                         dr["duration"] = "24";
                         dr["is_view"] = false;
                         dr["is_edit"] = false;
+                        dr["is_leave_event"] = false;
                         foreach (DataColumn col in dt.Columns)
                         {
                             row.Add(col.ColumnName, dr[col]);

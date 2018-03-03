@@ -3,7 +3,7 @@
     SelectList monthLst = @ViewBag.MonthList;
     SelectList leaveDurList = @ViewBag.LeaveDurTypes;
     SelectList leaveTypeList = @ViewBag.LeaveTypes;
-    Layout = "~/Views/Shared/_UserDetails.cshtml";
+    Layout = "~/Views/Shared/_UserDetails.cshtml";    
 }
 <html>
 <head>
@@ -22,105 +22,9 @@
         var LeaveTypList = @Html.Raw(Json.Encode(ViewBag.LeaveTypes));
     </script>
 </head>
-<body>
-    <div class="modal fade" id="EditLeaveModal" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="modal-title text-center">Leave Details</h3>
-                </div>
-                <div id="LoadPageLvEdit" class="row text-center waitIconDivRprt" style="display:none">
-                    <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgLvEdit"></i>
-                </div>
-                <div class="modal-body">
-                    <div class="lvEditView">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5 class="hrms-required-field">From Date</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                <input type="text" class="form-control" id="LvstartDateLabel" placeholder="From Date" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5 class="hrms-required-field">To Date</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                <input type="text" class="form-control" id="LvtoDateLabel" placeholder="To Date" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5 class="top-margin">Leave Status</h5>
-                            </div>
-                            <div class="col-lg-6 top-margin">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <label id="leaveStatusLabel"></label>
-                                    </div>
-                                    <div class="col-lg-6" id="lv_cancel_div" hidden>
-                                        <input type="checkbox" id="lv_cancel_chkBx" disabled="disabled" title="Cancel Leave" />
-                                        <label for="lv_cancel_chkBx">Cancel</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5 class="hrms-required-field">Leave Type</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                @Html.DropDownList("leaveTypeLabel", leaveTypeList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5 class="hrms-required-field">Duration Type</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                @Html.DropDownList("LvDurTypLabel", leaveDurList, "Select Leave Duration", new { @class = "form-control LvdropDown" })
-                            </div>
-                        </div>
-                        <div class="row hidden" id="lvSessionTypDiv">
-                            <div class="col-lg-6">
-                                <h5 class="hrms-required-field">Session</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                <select class="form-control" id="LeaveSessionDropDown">
-                                    <option value="0">Select a session</option>
-                                    <option value="1">Morning session (09.00 AM to 1.00 PM)</option>
-                                    <option value="2">Afternoon session (01.00 PM to 06.00 PM)</option>
-                                </select>
-                                @Html.Label("Please Select a session !!", new { id = "ErrLvSession", @class = "text-danger errLabel" })
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h5>Comments</h5>
-                            </div>
-                            <div class="col-lg-6">
-                                <textarea id="cmntsArea" class="form-control txt-area" placeholder="Comments" maxlength="3992"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="row modal-footer">
-                        <div class="col-lg-12 text-center">
-                            <input type="submit" value="Edit" class="btn btn-info btn-fill" id="LeaveEditBtn" onclick="LeaveEditClick()" />
-                            <input type="button" value="Update" style="display:none" id="LeaveUpdateBtn" class="btn btn-info btn-fill" onclick="LeaveUpdateClick()" />
-                            <i class="fa fa-envelope fa-2x cursor" aria-hidden="true" id="cntctAdmin" data-toggle="modal" data-target="#SentLeaveQueryModal"
-                               title="Contact Admin"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade col-xs-12 col-md-12 col-lg-12 col-sm-12" id="SentLeaveQueryModal" role="dialog">
+<body> 
+    @RenderPage("~/Views/Modals/EditLeaveModal.cshtml",new { leaveDurList = leaveDurList, leaveTypeList = leaveTypeList })
+    <div class="modal fade" id="SentLeaveQueryModal" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -132,7 +36,7 @@
                     <i class='fa fa-refresh fa-spin fa-2x fa-fw' id="imgProgQuery"></i>
                 </div>
                 <div class="modal-body" id="contactAdminDiv">
-                    @Html.Partial("../EMail/SentQuery")
+                    @Html.Partial("../Email/SentQuery")
                 </div>
             </div>
         </div>
@@ -141,8 +45,7 @@
         <div class="header">
             <h4 class="title" id="profileTitle">Leave Reports</h4>
         </div>
-        <div class="content">
-            @Html.Hidden("LeaveId")
+        <div class="content">            
             <div class="row text-center">
                 <div class="col-lg-6">
                     <h5 id="monthLabel"></h5>
@@ -194,3 +97,4 @@
 </body>
 </html>
 <script src="~/Scripts/app/user/leavereports.js"></script>
+<script src="~/Scripts/app/user/manageleave.js"></script>

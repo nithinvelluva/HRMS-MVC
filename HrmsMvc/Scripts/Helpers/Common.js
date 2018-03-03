@@ -216,3 +216,41 @@ function AjaxCall(url, params, callback, loadHideCallback) {
         }
     });
 };
+function calendarAjaxPOSTRequest(url, params, callback, callback_params) {
+    params = (params) ? params : {};
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        datatype: "json",
+        data: JSON.stringify(params),
+        success: function (response) {
+            if (callback) {
+                callback(response, callback_params);
+            }
+        },
+        error: function (response) {
+            eventLoading(false);
+            eventPopupLoading(false);
+        }
+    });
+};
+function calendarAjaxGETRequest(url, params, callback, callback_params) {
+    params = (params) ? params : {};
+    $.ajax({
+        url: url,
+        type: "GET",
+        contentType: "application/json",
+        datatype: "json",
+        data: params,
+        success: function (response) {
+            if (callback) {
+                callback(response, callback_params);
+            }
+        },
+        error: function (response) {
+            eventLoading(false);
+            eventPopupLoading(false);
+        }
+    });
+};

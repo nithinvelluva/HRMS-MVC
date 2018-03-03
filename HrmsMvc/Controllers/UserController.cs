@@ -650,7 +650,7 @@ namespace HrmsMvc.Controllers
             if (lm != null)
             {
                 CalendarEventInfo event_info = new CalendarEventInfo();
-                event_info.event_type = 1;
+                event_info.event_type = 3;
                 event_info.status = 1;
                 List<CalendarEventDate> event_dates = new List<CalendarEventDate>();
                 event_dates.Add(
@@ -702,7 +702,7 @@ namespace HrmsMvc.Controllers
                     },
                     event_log = "Leave added."
                 };
-                if(lm._lvId <= 0)
+                if (lm._lvId <= 0)
                 {
                     row_id = Db.taskSave(event_info, event_log, lm);
                 }
@@ -731,6 +731,12 @@ namespace HrmsMvc.Controllers
             return Json(new { data = rtrnStr }, JsonRequestBehavior.AllowGet);
         }
 
+        // GET: leaveDetailsFetch
+        [AcceptVerbs(HttpVerbs.Get)]
+        public JsonResult leaveDetailsFetch(int leave_event_id = 0, bool IsCalendarEdit = false)
+        {
+            return Json(new { data = Db.leaveDetailsFetch(leave_event_id, IsCalendarEdit) }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region Manage UserReports

@@ -27,6 +27,12 @@ namespace HrmsMvc.Controllers
 
                 ViewBag.EmpId = em.EmpID;
                 ViewBag.UserType = em.Usertype;
+                ViewBag.LeaveTypes = new SelectList(Db.GetLeaveTypes(), "Value", "Text", "");
+                ViewBag.LeaveDurTypes = new SelectList(new SelectListItem[]
+                {
+                        new SelectListItem { Text = "Full Day", Value = "1"},
+                        new SelectListItem { Text = "Half Day", Value = "2"}
+                }, "Value", "Text", "");               
 
                 return View("calendarView", em);
             }
@@ -77,10 +83,12 @@ namespace HrmsMvc.Controllers
                         DataColumn duration = events_dt.Columns.Add("duration", typeof(String));
                         DataColumn is_view = events_dt.Columns.Add("is_view", typeof(bool));
                         DataColumn is_edit = events_dt.Columns.Add("is_edit", typeof(bool));
+                        DataColumn is_leave_event = events_dt.Columns.Add("is_leave_event", typeof(bool));
 
                         foreach (DataRow dr in events_dt.Rows)
                         {
                             row = new Dictionary<string, object>();
+                            dr["is_leave_event"] = (Convert.ToInt32(dr["event_type"].ToString()) == 3) ? true : false;
                             dr["is_view"] = true;
                             dr["is_edit"] = true;
                             dr["start_time"] = (dr["start_date"].ToString()).Split(' ')[1];
@@ -109,6 +117,7 @@ namespace HrmsMvc.Controllers
                         DataColumn duration = events_dt.Columns.Add("duration", typeof(String));
                         DataColumn is_view = events_dt.Columns.Add("is_view", typeof(bool));
                         DataColumn is_edit = events_dt.Columns.Add("is_edit", typeof(bool));
+                        DataColumn is_leave_event = events_dt.Columns.Add("is_leave_event", typeof(bool));
 
                     }
                 }
@@ -315,7 +324,7 @@ namespace HrmsMvc.Controllers
                             },
                             event_log = "Task edited."
                         };
-                        row_id = Db.taskEdit(event_info, event_log);
+                        row_id = Db.taskEdit(event_info, event_log);                        
                         DataTable dt = Db.fetchEventDetailsById(event_info.Id);
                         if (dt != null && dt.Rows.Count > 0)
                         {

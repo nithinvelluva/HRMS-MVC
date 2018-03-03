@@ -165,6 +165,7 @@
     <Content Include="Scripts\app\admin\users.js" />
     <Content Include="Scripts\app\account\Login.js" />
     <Content Include="Scripts\app\calendar\calendarView.js" />
+    <Content Include="Scripts\app\user\manageleave.js" />
     <Content Include="Scripts\fullcalendar.min.js" />
     <Content Include="Scripts\app\user\attendance.js" />
     <Content Include="Scripts\app\user\changepassword.js" />
@@ -355,6 +356,7 @@
     <Content Include="Views\Admin\EmployeeReports.cshtml" />
     <Content Include="Views\Admin\ViewEmployeeDetails.cshtml" />
     <Content Include="Views\Admin\AddEmployee.cshtml" />
+    <Content Include="Views\Modals\EditLeaveModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
