@@ -1,44 +1,24 @@
 ﻿var IsCancel = false;
 var IsCalendarEdit = false;
 $(document).ready(function () {
-    $('#lv_cancel_chkBx').on('change', function () {
-        var isCancel = $(this).is(':checked');
-        if (isCancel) {
-            var message = "Are you sure want to cancel the leave ?";
-            var title = "HRMS";
-            ymz.jq_confirm({
-                title: !stringIsNull(title) ? title : "HRMS",
-                text: message,
-                no_btn: "No",
-                yes_btn: "Yes",
-                no_fn: function () {
-                    $('#lv_cancel_chkBx').prop('checked', false);
-                },
-                yes_fn: function () {
-                    $('#leaveStatusLabel').text(isCancel ? "Cancelled" : "Pending");
-                    $('#leaveStatusLabel').css('color', (isCancel) ? '#ff0000' : '#ff6a00');
-                }
-            });
-        }
-        else {
-            $('#leaveStatusLabel').text(isCancel ? "Cancelled" : "Pending");
-            $('#leaveStatusLabel').css('color', (isCancel) ? '#ff0000' : '#ff6a00');
-        }
-    });
     $(document).on('click', '.ViewLeaveDetails', function () {
         var leaveId = $(this).attr('data-id');
         IsCalendarEdit = false;
         leaveEditPopupLoading(true);
         var url = "/user/leaveDetailsFetch";
-        var params = { leave_event_id: leaveId, IsCalendarEdit: false };
+        var params = { leave_event_id: leaveId };
         var callback = leaveDetailsFetchCallback;
         calendarAjaxGETRequest(url, params, callback);
     });
+    $('#EditLeaveModal').on('hidden.bs.modal', function () {
+        initLeaveModal();
+    });
 });
-function LeaveEditClick() {
-    $('#LeaveEditBtn').hide();
-    $('#LeaveUpdateBtn').show();
-    EnableLeaveFields();
+function initLeaveModal() {
+    $('#cntctAdmin').hide();
+    $('#LeaveUpdateBtn').hide();
+    $('#LeaveCancelBtn').hide();
+    DisableLeaveFields();
 };
 function LeaveUpdateClick() {
     var leaveID = $('#LeaveId').val();
@@ -48,8 +28,7 @@ function LeaveUpdateClick() {
     var lvTypInt = $('#leaveTypeLabel').val();
     var lvtypstr = $('#leaveTypeLabel option:selected').text();
     var lvdurtyp = $('#LvDurTypLabel').val();
-    var lvdurtypstr = $('#LvDurTypLabel option:selected').text();
-    IsCancel = $('#lv_cancel_chkBx').is(':checked');
+    var lvdurtypstr = $('#LvDurTypLabel option:selected').text();    
     var LvSession = $('#LeaveSessionDropDown').val();
 
     var validFlag = false;
@@ -76,8 +55,7 @@ function LeaveUpdateClick() {
             _comments: comments ? comments : "",
             _strLvType: lvtypstr,
             Usertype: userType,
-            _leavedurationtype: lvdurtypstr,
-            _cancelled: IsCancel,
+            _leavedurationtype: lvdurtypstr,            
             _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0
         };
         $.ajax({
@@ -165,6 +143,21 @@ function LeaveUpdateClick() {
         });
     }
 };
+function LeaveCancelClick() {
+    var message = "Are you sure want to cancel the leave ?";
+    var title = "HRMS";
+    ymz.jq_confirm({
+        title: !stringIsNull(title) ? title : "HRMS",
+        text: message,
+        no_btn: "No",
+        yes_btn: "Yes",
+        no_fn: function () {            
+        },
+        yes_fn: function () {
+            alert("JABAAA");
+        }
+    });
+};
 function EnableLeaveFields() {
     $('#LvstartDateLabel').removeAttr("disabled");
     $('#LvtoDateLabel').removeAttr("disabled");
@@ -188,6 +181,7 @@ function leaveEditPopupLoading(isLoading) {
 };
 function leaveDetailsFetchCallback(response) {
     if (response && response.data) {
+        initLeaveModal();
         DisableLeaveFields();
         $('#EditLeaveModal').modal('show');
         var data = response.data;
@@ -195,33 +189,24 @@ function leaveDetailsFetchCallback(response) {
         var lvSessionTyp = data._leaveHalfDaySession;
         //pending state.
         if (data._leaveStatus == "PENDING") {
-            $('#LeaveEditBtn').show();
-            $('#cntctAdmin').hide();
-            $('#lv_cancel_div').show();
+            $('#LeaveUpdateBtn').show();
+            $('#LeaveCancelBtn').show();
             $('#leaveStatusLabel').css('color', '#ff6a00');//orange color
+            EnableLeaveFields();
         }
             //approved state.
         else if (data._leaveStatus == "APPROVED") {
-            $('#LeaveEditBtn').hide();
-            $('#cntctAdmin').hide();
-            $('#lv_cancel_div').hide();
             $('#leaveStatusLabel').css('color', '#4cff00');//green color
         }
             //rejected state.
         else if (data._leaveStatus == "REJECTED") {
-            $('#LeaveEditBtn').hide();
             $('#cntctAdmin').show();
-            $('#lv_cancel_div').hide();
             $('#leaveStatusLabel').css('color', '#ff0000');//red color
         }
             //cancel state.
         else if (data._leaveStatus == "CANCELLED") {
-            $('#LeaveEditBtn').hide();
-            $('#cntctAdmin').hide();
-            $('#lv_cancel_div').hide();
             $('#leaveStatusLabel').css('color', '#ff0000');//red color
         }
-
         $("#LvstartDateLabel").datepicker({
             format: 'yyyy-mm-dd', autoclose: true, todayHighlight: false
         });
@@ -232,7 +217,6 @@ function leaveDetailsFetchCallback(response) {
         $('#LvtoDateLabel').datepicker('setDate', data._todate);
         $('#cmntsArea').val(data._comments);
         $('#leaveStatusLabel').text(data._leaveStatus);
-
         $('#leaveTypeLabel').empty();
         $('#leaveTypeLabel').val(data._leaveType);
         $('#LvDurTypLabel').empty();
@@ -251,7 +235,7 @@ function leaveDetailsFetchCallback(response) {
                 break;
             case 5:
                 strLvType = "Sick";
-                break;            
+                break;
             default:
         }
         var durId = data._leaveDurTypeInt;

@@ -141,7 +141,7 @@ function fetchEventsCallback(response) {
                     color: event_cell_color,
                     event_employees: event_employees,
                     editable: false,
-                    className: (event_type == 1) ? 'full_calendar_event_class' : 'full_calendar_event_other',
+                    className: (event_type == 1) ? 'full_calendar_event_class' : 'full_calendar_event_other',//full_calendar_event_birthday
                     is_editable: response.data[i].is_edit,
                     status: response.data[i].status,
                     is_leave_event: response.data[i].is_leave_event,
@@ -544,6 +544,14 @@ function initCalendarFields() {
     $('.calendarheader_people_sel').val(0);
     $('.calendarheader_people_sel').text($('#all_people_label').val());
 };
+$(document).on('click', '.mng_event_popup_weeknumber_btn', function () {
+    var week_start_day = new Date($(this).attr('data-info'));
+    $('.mng_event_popup_weeknumber_btn').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
+    $('.mng-event-popup-weekday-btn').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
+    $(this).toggleClass('mng-event-popup-weekday-btn-sel').toggleClass('mng-event-popup-weekday-btn-unsel');
+    var view_type_btns = $('.fc-button-group').find('button');
+    $(view_type_btns[$(this).attr('data-id')]).trigger('click');
+});
 $(document).ready(function () {
     navigateTo(TASKS);
     $('#event_file_upload_select').ssi_uploader({
@@ -610,7 +618,7 @@ $(document).ready(function () {
                         IsCalendarEdit = true;
                         leaveEditPopupLoading(true);
                         var url = "/user/leaveDetailsFetch";
-                        var params = { leave_event_id: calEvent.id, IsCalendarEdit: true };
+                        var params = { leave_event_id: calEvent.id };
                         var callback = leaveDetailsFetchCallback;
                         calendarAjaxGETRequest(url, params, callback);
                         sel_event_id = calEvent.id;
@@ -790,37 +798,9 @@ $(document).ready(function () {
     function toggleCalendarDropDownIcon(dropdown) {
         $(dropdown).toggleClass("fa-chevron-down").toggleClass("fa-chevron-up");
     };
-    $('.mng-event-popup-weekday-btn').on('click', function () {
-        $('.mng-event-popup-weekday-btn').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
-        $(this).toggleClass('mng-event-popup-weekday-btn-unsel').toggleClass('mng-event-popup-weekday-btn-sel');
-        $('#calendar_task_from_date').val($(this).find('.week_day_date_disp').text());
-    });
-    $('.mng-event-popup-weekday-btn_to').on('click', function () {
-        $('.mng-event-popup-weekday-btn_to').removeClass('mng-event-popup-weekday-btn-sel mng-event-popup-weekday-btn-unsel').addClass('mng-event-popup-weekday-btn-unsel');
-        $(this).toggleClass('mng-event-popup-weekday-btn-unsel').toggleClass('mng-event-popup-weekday-btn-sel');
-        $('#calendar_task_to_date').val($(this).find('.week_day_date_disp_to').text());
-    });
     $('#eventPopupDiv').on('hidden.bs.modal', function () {
         resetEventPopupValues();
         calendarHideAlertMessage(true);
-    });
-    $('#calendarheader-year-drpdwn').focusout(function () {
-        $('#yrdropdownIcon').removeClass("fa-chevron-up fa-chevron-down").addClass("fa-chevron-down");
-    });
-    $('#calendarheader-year-drpdwn').on('click', function () {
-        toggleCalendarDropDownIcon('#yrdropdownIcon');
-    });
-    $('#calendarheader-week-drpdwn').focusout(function () {
-        $('#weekdropdownIcon').removeClass("fa-chevron-up fa-chevron-down").addClass("fa-chevron-down");
-    });
-    $('#calendarheader-week-drpdwn').on('click', function () {
-        toggleCalendarDropDownIcon('#weekdropdownIcon');
-    });
-    $('#mng_event_popup_employee_drpdwn').focusout(function () {
-        $('#mng-event-popup-drpDwnBtn-inskriven-icon').removeClass("fa-chevron-up fa-chevron-down").addClass("fa-chevron-down");
-    });
-    $('#mng_event_popup_employee_drpdwn').on('click', function () {
-        toggleCalendarDropDownIcon('#mng-event-popup-drpDwnBtn-inskriven-icon');
     });
     $('#drp4').on('hide.bs.dropdown', function (event) {
         toggleCalendarDropDownIcon('#drpDwnBtnLastIcon');

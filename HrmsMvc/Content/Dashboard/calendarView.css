@@ -429,6 +429,13 @@
     cursor: pointer;
 }
 
+.full_calendar_event_birthday {
+    height: 60px;
+    border: #000;
+    pointer-events:none;
+    margin-bottom:5px;
+}
+
 .full_calendar_event_other {
     height: 60px;
     border: #000;

@@ -114,9 +114,7 @@ namespace HrmsMvc.Models
         public bool _status { get; set; }
         public bool _rejected { get; set; }
         public bool _cancelled { get; set; }
-        public string _leaveStatus { get; set; }
-
-        public int _calendarEntryId { get; set; }
+        public string _leaveStatus { get; set; }        
 
         public ArrayList RtrnArry { get; set; }
     }

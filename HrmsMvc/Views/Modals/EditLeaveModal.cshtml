@@ -41,23 +41,7 @@
                             <div class="row">
                                 <div class="col-lg-4">
                                     <label id="leaveStatusLabel"></label>
-                                </div>
-                                @if (@Model.Usertype != 1)
-                                {
-                                    <div class="col-lg-8" id="lv_cancel_div" hidden>
-                                        <input type="checkbox" id="lv_cancel_chkBx" disabled="disabled" title="Cancel Leave" />
-                                        <label for="lv_cancel_chkBx">Cancel</label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="col-lg-8">
-                                        <div class="row">
-                                            <div class="col-lg-3" title="Approve"><i class="fa fa-2x fa-check-square cursor"></i></div>
-                                            <div class="col-lg-3" title="Reject"><i class="fa fa-2x fa-times-circle cursor"></i></div>
-                                        </div>
-                                    </div>
-                                }
+                                </div>                                
                             </div>
                         </div>
                     </div>
@@ -103,9 +87,9 @@
                 <div class="row modal-footer">
                     <div class="col-lg-12 text-center">
                         @if (@Model.Usertype != 1)
-                        {
-                            <input type="submit" value="Edit" class="btn btn-info btn-fill" id="LeaveEditBtn" onclick="LeaveEditClick()" />
-                            <input type="button" value="Update" style="display:none" id="LeaveUpdateBtn" class="btn btn-info btn-fill" onclick="LeaveUpdateClick()" />
+                        {                            
+                            <input type="button" value="Cancel Leave Request" style="display:none" id="LeaveCancelBtn" class="btn btn-info btn-fill" onclick="LeaveCancelClick();" />
+                            <input type="button" value="Update" style="display:none" id="LeaveUpdateBtn" class="btn btn-info btn-fill" onclick="LeaveUpdateClick();" />
                             <i class="fa fa-envelope fa-2x cursor" aria-hidden="true" id="cntctAdmin" data-toggle="modal" data-target="#SentLeaveQueryModal"
                                title="Contact Admin"></i>
                         }

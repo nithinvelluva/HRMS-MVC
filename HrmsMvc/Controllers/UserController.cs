@@ -616,22 +616,13 @@ namespace HrmsMvc.Controllers
                                 GenericCallbackModel gcm = new GenericCallbackModel();
                                 gcm = Db.AddLeave(lm);
                                 rtrnStr = (gcm != null) ? gcm.Message : null;
-                                lm._lvId = (gcm != null) ? gcm.ID : 0;
-                                if (lm._lvId > 0)
-                                {
-                                    AddLeaveCalendarEntry(lm);
-                                }
+                                lm._lvId = (gcm != null) ? gcm.ID : 0;                                
                             }
                             else//Edit leave
                             {
                                 GenericCallbackModel gcm = new GenericCallbackModel();
                                 gcm = Db.UpdateLeave(lm, leave_model.Usertype);
-                                rtrnStr = (gcm != null) ? gcm.Message : null;
-                                lm._calendarEntryId = (gcm != null) ? gcm.SecID : 0;
-                                if (lm._calendarEntryId > 0)
-                                {
-                                    AddLeaveCalendarEntry(lm);
-                                }
+                                rtrnStr = (gcm != null) ? gcm.Message : null;                         
                             }
                         }
                     }
@@ -644,76 +635,15 @@ namespace HrmsMvc.Controllers
             return Json(new { data = rtrnStr, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
         }
 
-        private int AddLeaveCalendarEntry(LeaveModel lm)
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult ManageLeave(LeaveModel leaveModel)
         {
-            int row_id = 0;
-            if (lm != null)
-            {
-                CalendarEventInfo event_info = new CalendarEventInfo();
-                event_info.event_type = 3;
-                event_info.status = 1;
-                List<CalendarEventDate> event_dates = new List<CalendarEventDate>();
-                event_dates.Add(
-                    new CalendarEventDate
-                    {
-                        start_date = lm._fromdate,
-                        end_date = lm._todate
-                    });
-                switch (lm._leavedurationtype)
-                {
-                    case "Full Day":
-                        event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
-                        event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
-                        break;
-                    case "Half Day":
-                        switch (lm._leaveHalfDaySession)
-                        {
-                            case 1://morning session
-                                event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
-                                event_dates[0].end_date = event_dates[0].end_date + " " + "13:00:00";
-                                break;
-                            case 2://afternoon session
-                                event_dates[0].start_date = event_dates[0].start_date + " " + "14:00:00";
-                                event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
-                                break;
-                            default:
-                                event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
-                                event_dates[0].end_date = event_dates[0].end_date + " " + "13:00:00";
-                                break;
-                        }
-                        break;
-                    default:
-                        event_dates[0].start_date = event_dates[0].start_date + " " + "09:00:00";
-                        event_dates[0].end_date = event_dates[0].end_date + " " + "18:00:00";
-                        break;
-                }
-                event_info.event_dates = event_dates;
-                List<int> employee = new List<int>();
-                employee.Add(lm.EmpID);
-                event_info.employee = employee;
-                event_info.heading = "Applied for leave";
-                event_info.note = "";
+            GenericCallbackModel gcm = new GenericCallbackModel();
+            gcm = Db.UpdateLeave(leaveModel, leaveModel.Usertype);
+            string rtrnStr = (gcm != null) ? gcm.Message : null;                
 
-                CalendarEventLog event_log = new CalendarEventLog()
-                {
-                    creator_employee = new EmployeeModel()
-                    {
-                        EmpID = lm.EmpID
-                    },
-                    event_log = "Leave added."
-                };
-                if (lm._lvId <= 0)
-                {
-                    row_id = Db.taskSave(event_info, event_log, lm);
-                }
-                else
-                {
-                    event_info.Id = lm._calendarEntryId;
-                    row_id = Db.taskEdit(event_info, event_log, lm);
-                }
-            }
-            return row_id;
-        }
+            return null;
+        }       
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult SentQuery(string SenterMail, string emailSubject, string emailBody)
@@ -733,9 +663,9 @@ namespace HrmsMvc.Controllers
 
         // GET: leaveDetailsFetch
         [AcceptVerbs(HttpVerbs.Get)]
-        public JsonResult leaveDetailsFetch(int leave_event_id = 0, bool IsCalendarEdit = false)
+        public JsonResult leaveDetailsFetch(int leave_event_id = 0)
         {
-            return Json(new { data = Db.leaveDetailsFetch(leave_event_id, IsCalendarEdit) }, JsonRequestBehavior.AllowGet);
+            return Json(new { data = Db.leaveDetailsFetch(leave_event_id) }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 

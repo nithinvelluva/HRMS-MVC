@@ -32,7 +32,7 @@ namespace HrmsMvc.Controllers
                 {
                         new SelectListItem { Text = "Full Day", Value = "1"},
                         new SelectListItem { Text = "Half Day", Value = "2"}
-                }, "Value", "Text", "");               
+                }, "Value", "Text", "");
 
                 return View("calendarView", em);
             }
@@ -62,6 +62,7 @@ namespace HrmsMvc.Controllers
 
                 DataTable events_dt = new DataTable();
                 DataTable birthday_events = new DataTable();
+                DataTable leave_events = new DataTable();
                 List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
                 Dictionary<string, object> row = null;
 
@@ -88,7 +89,7 @@ namespace HrmsMvc.Controllers
                         foreach (DataRow dr in events_dt.Rows)
                         {
                             row = new Dictionary<string, object>();
-                            dr["is_leave_event"] = (Convert.ToInt32(dr["event_type"].ToString()) == 3) ? true : false;
+                            dr["is_leave_event"] = false;
                             dr["is_view"] = true;
                             dr["is_edit"] = true;
                             dr["start_time"] = (dr["start_date"].ToString()).Split(' ')[1];
@@ -125,8 +126,19 @@ namespace HrmsMvc.Controllers
                 {
                     birthday_events = Db.getEmployeeBirthdayEvents(_start_date, _end_date);
                 }
+                if (event_filter_id == 3 || event_filter_id == 0)
+                {
+                    LeaveModel lm = new LeaveModel();
+                    lm._fromdate = _start_date;
+                    lm._todate = _end_date;
+                    lm.EmpID = emp_id;
+                    leave_events = Db.getEmployeeLeaveEvents(lm);
+                }
 
                 row = null;
+
+                #region Normal events
+
                 List<EmployeeModel> employees = null;
                 DataTable filter_events_dt = (events_dt != null && events_dt.Rows.Count > 0) ? events_dt.AsEnumerable().GroupBy(r => r.Field<int>("Id")).Select(g => g.First()).CopyToDataTable() : null;
                 foreach (DataRow dr in events_dt.Rows)
@@ -170,11 +182,44 @@ namespace HrmsMvc.Controllers
                     }
                 }
 
+                #endregion
+
                 #region Birthday events
                 foreach (DataRow dr in birthday_events.Rows)
                 {
                     row = new Dictionary<string, object>();
                     foreach (DataColumn col in birthday_events.Columns)
+                    {
+                        row.Add(col.ColumnName, dr[col]);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(dr["employee_id"].ToString()))
+                    {
+                        employees = new List<EmployeeModel>();
+                        employees.Add(new EmployeeModel()
+                        {
+                            EmpID = Convert.ToInt32(dr["employee_id"].ToString()),
+                            UserPhotoPath = dr["EmpPhotoPath"].ToString(),
+                            EmpFirstname = dr["EmpFirstname"].ToString(),
+                            EmpLastname = dr["EmpLastname"].ToString(),
+                            Gender = dr["EmpGender"].ToString()
+                        });
+                    }
+                    row.Add("employees", employees.GroupBy(x => x.EmpID).Select(y => y.First()));
+                    row.Remove("employee_id");
+                    row.Remove("EmpPhotoPath");
+                    row.Remove("EmpFirstname");
+                    row.Remove("EmpLastname");
+                    row.Remove("EmpGender");
+                    rows.Add(row);
+                }
+                #endregion
+
+                #region Leave events
+                foreach (DataRow dr in leave_events.Rows)
+                {
+                    row = new Dictionary<string, object>();
+                    foreach (DataColumn col in leave_events.Columns)
                     {
                         row.Add(col.ColumnName, dr[col]);
                     }
@@ -324,7 +369,7 @@ namespace HrmsMvc.Controllers
                             },
                             event_log = "Task edited."
                         };
-                        row_id = Db.taskEdit(event_info, event_log);                        
+                        row_id = Db.taskEdit(event_info, event_log);
                         DataTable dt = Db.fetchEventDetailsById(event_info.Id);
                         if (dt != null && dt.Rows.Count > 0)
                         {
