@@ -56,83 +56,10 @@ function LeaveUpdateClick() {
             _strLvType: lvtypstr,
             Usertype: userType,
             _leavedurationtype: lvdurtypstr,            
-            _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0
+            _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0,
+            _cancelled: false
         };
-        $.ajax({
-            url: "/User/AddLeave",
-            type: "POST",
-            data: JSON.stringify(params),
-            datatype: "json",
-            contentType: "application/json",
-            success: function (status) {
-                HideLoadreport("#LoadPageLvEdit", ".lvEditView");
-                if (!stringIsNull(status.data)) {
-                    var error = '';
-                    var response = status.data;
-                    if (response == "OK") {
-                        ymz.jq_alert({
-                            title: "HRMS",
-                            text: "Saved Successfully",
-                            ok_btn: "OK",
-                            close_fn: function () {
-                                $('#LeaveEditBtn').show();
-                                $('#LeaveUpdateBtn').hide();
-                                DisableLeaveFields();
-                                $('#EditLeaveModal').modal('toggle');
-                                if (!IsCalendarEdit) {
-                                    PopulateLeaveReportTable(currMonth, currYear, false);
-                                    if (IsCancel) {
-                                        document.getElementById("leaveStatusLabel").style.color = '#ff0000';
-                                        $('#leaveStatusLabel').text("Cancelled");
-                                        $('#lv_cancel_div').hide();
-                                        $('#LeaveEditBtn').hide();
-                                    }
-                                }
-                                else {
-                                    fetchEvents();
-                                }
-                            }
-                        });
-                    }
-                    else if (response == "EXISTS") {
-                        error = "An Entry Exists In Selected Date Range !!";
-                    }
-                    else if (response == "ERROR") {
-                        error = "An Unexpected Error Occured !!";
-                    }
-                    else if (response == "1" || response == "2" || response == "3" || response == "5") {
-                        error = "Select Mandatory Fields !!";
-                    }
-                    else if (response == "4") {
-                        error = "To Date Must Greater than equal to From Date !!";
-                    }
-                    else if (response == "6") {
-                        error = "Only 9 Festive leaves can be availed per year !!";
-                    }
-                    else if (response == "7") {
-                        error = "No Enough Leaves !!";
-                    }
-
-                    if (error) {
-                        ymz.jq_alert({
-                            title: "HRMS",
-                            text: error,
-                            ok_btn: "OK",
-                            close_fn: null
-                        });
-                    }
-                }
-            },
-            error: function (status) {
-                HideLoadreport("#LoadPageLvEdit", ".lvEditView");
-                ymz.jq_alert({
-                    title: "HRMS",
-                    text: "An unexpected error occured !",
-                    ok_btn: "OK",
-                    close_fn: null
-                });
-            }
-        });
+        manageLeaveAjaxRequest(params);
     }
     else {
         ymz.jq_alert({
@@ -154,7 +81,107 @@ function LeaveCancelClick() {
         no_fn: function () {            
         },
         yes_fn: function () {
-            alert("JABAAA");
+            var leaveID = $('#LeaveId').val();
+            var strtDate = $('#LvstartDateLabel').val();
+            var toDate = $('#LvtoDateLabel').val();
+            var comments = $('#cmntsArea').val();
+            var lvTypInt = $('#leaveTypeLabel').val();
+            var lvtypstr = $('#leaveTypeLabel option:selected').text();
+            var lvdurtyp = $('#LvDurTypLabel').val();
+            var lvdurtypstr = $('#LvDurTypLabel option:selected').text();
+            var LvSession = $('#LeaveSessionDropDown').val();
+            var params = {
+                _lvId: leaveID,
+                EmpID: empId,
+                _fromdate: strtDate,
+                _todate: toDate,
+                _leaveType: lvTypInt,
+                _leaveDurTypeInt: lvdurtyp,
+                _comments: comments ? comments : "",
+                _strLvType: lvtypstr,
+                Usertype: userType,
+                _leavedurationtype: lvdurtypstr,
+                _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0,
+                _cancelled: true
+            };
+            manageLeaveAjaxRequest(params);
+        }
+    });
+};
+function manageLeaveAjaxRequest(leave_model) {
+    $.ajax({
+        url: "/User/AddLeave",
+        type: "POST",
+        data: JSON.stringify(leave_model),
+        datatype: "json",
+        contentType: "application/json",
+        success: function (status) {
+            HideLoadreport("#LoadPageLvEdit", ".lvEditView");
+            if (!stringIsNull(status.data)) {
+                var error = '';
+                var response = status.data;
+                if (response == "OK") {
+                    ymz.jq_alert({
+                        title: "HRMS",
+                        text: "Saved Successfully",
+                        ok_btn: "OK",
+                        close_fn: function () {
+                            $('#LeaveEditBtn').show();
+                            $('#LeaveUpdateBtn').hide();
+                            DisableLeaveFields();
+                            $('#EditLeaveModal').modal('toggle');
+                            if (!IsCalendarEdit) {
+                                PopulateLeaveReportTable(currMonth, currYear, false);
+                                if (IsCancel) {
+                                    document.getElementById("leaveStatusLabel").style.color = '#ff0000';
+                                    $('#leaveStatusLabel').text("Cancelled");
+                                    $('#lv_cancel_div').hide();
+                                    $('#LeaveEditBtn').hide();
+                                }
+                            }
+                            else {
+                                fetchEvents();
+                            }
+                        }
+                    });
+                }
+                else if (response == "EXISTS") {
+                    error = "An Entry Exists In Selected Date Range !!";
+                }
+                else if (response == "ERROR") {
+                    error = "An Unexpected Error Occured !!";
+                }
+                else if (response == "1" || response == "2" || response == "3" || response == "5") {
+                    error = "Select Mandatory Fields !!";
+                }
+                else if (response == "4") {
+                    error = "To Date Must Greater than equal to From Date !!";
+                }
+                else if (response == "6") {
+                    error = "Only 9 Festive leaves can be availed per year !!";
+                }
+                else if (response == "7") {
+                    error = "No Enough Leaves !!";
+                }
+
+                if (error) {
+                    ymz.jq_alert({
+                        title: "HRMS",
+                        text: error,
+                        ok_btn: "OK",
+                        close_fn: null
+                    });
+                }
+            }
+        },
+        error: function (status) {
+            HideLoadreport("#LoadPageLvEdit", ".lvEditView");
+            ymz.jq_alert({
+                title: "HRMS",
+                text: "An unexpected error occured !",
+                ok_btn: "OK",
+                close_fn: null
+            });
         }
     });
 };

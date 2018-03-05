@@ -957,7 +957,7 @@ namespace HrmsMvc
                             cmd2.Parameters.AddWithValue("@leaveType", lm._leaveType);
                             cmd2.Parameters.AddWithValue("@status", status);
                             cmd2.Parameters.AddWithValue("@comments", (lm._comments != null) ? lm._comments : "");
-                            cmd2.Parameters.AddWithValue("@leavedurationtype", lm._leavedurationtype);                           
+                            cmd2.Parameters.AddWithValue("@leavedurationtype", lm._leavedurationtype);
                             cmd2.Parameters.AddWithValue("@leaveId", 0);
                             cmd2.Parameters.AddWithValue("@leaveSessionType", lm._leaveHalfDaySession);
 
@@ -994,7 +994,7 @@ namespace HrmsMvc
             return new GenericCallbackModel { ID = leaveId, Message = returnStr };
         }
 
-        public static GenericCallbackModel UpdateLeave(LeaveModel lm, int userType)
+        public static GenericCallbackModel UpdateLeave(LeaveModel lm)
         {
             string rtrnStr = null;
             int assc_task_id = 0;
@@ -1003,17 +1003,28 @@ namespace HrmsMvc
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
                 {
                     con.Open();
-                    int existId = 0;
                     ArrayList rtrnArrExis = new ArrayList();
+                    SqlCommand scmd = null;
+                    string query;
+                    bool lvDupFlag = false;
+                    int leaveStatus = 0;
+                    if (lm == null) return null;
 
-                    if (userType != 1)
+                    if (lm._status && !lm._cancelled && !lm._rejected) // Approved state.
                     {
-                        bool lvDupFlag = false;
-
-                        #region Duplicate checking
-                        if (!lm._cancelled)
+                        leaveStatus = 2;
+                        query = "UPDATE EmployeeLeaveInfo SET Status = @status WHERE [Id] = @lvId";
+                        scmd = new SqlCommand(query, con);
+                        scmd.Parameters.AddWithValue("status", leaveStatus);
+                    }
+                    else
+                    {
+                        #region Duplicate checking only for PENDING State.
+                        if (!lm._cancelled && !lm._status && !lm._rejected)
                         {
-                            SqlCommand scmd = new SqlCommand("SELECT Id FROM EmployeeLeaveInfo WHERE FromDate=@FromDate AND ToDate=@ToDate AND EmpId=@EmpId AND LeaveType=@leaveType AND Id !=@lvId AND Status NOT IN (3,-1)", con);
+                            leaveStatus = 1;
+                            int existId = 0;
+                            scmd = new SqlCommand("SELECT Id FROM EmployeeLeaveInfo WHERE FromDate=@FromDate AND ToDate=@ToDate AND EmpId=@EmpId AND LeaveType=@leaveType AND Id !=@lvId AND Status NOT IN (3,-1)", con);
                             scmd.Parameters.AddWithValue("FromDate", lm._fromdate);
                             scmd.Parameters.AddWithValue("ToDate", lm._todate);
                             scmd.Parameters.AddWithValue("EmpId", lm.EmpID);
@@ -1038,65 +1049,55 @@ namespace HrmsMvc
                             }
                         }
                         #endregion
-
                         if (!lvDupFlag)
                         {
-                            LeaveModel exisLeaveModel = leaveDetailsFetch(lm._lvId);
-                            if (exisLeaveModel != null)
+                            if (lm._rejected || lm._cancelled)
                             {
-                                DateTime frmdt = new DateTime();
-                                DateTime todt = new DateTime();
-                                string LvDurType = "";
-
-                                frmdt = Convert.ToDateTime(exisLeaveModel._fromdate.ToString());
-                                todt = Convert.ToDateTime(exisLeaveModel._todate.ToString());
-                                LvDurType = exisLeaveModel._leavedurationtype.ToString().TrimEnd();                                
-
-                                rtrnArrExis = CalculateLeaveStatistics(frmdt, todt, lm._strLvType, LvDurType, lm.EmpID);
-
-                                string query = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,LeaveSessionType = @leaveHalfDaySession WHERE [Id] = @lvId";
-                                string query1 = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,Status = @status,LeaveSessionType = @leaveHalfDaySession WHERE [Id] = @lvId";
-                                SqlCommand cmd2 = null;
-
-                                cmd2 = new SqlCommand((lm._cancelled) ? query1 : query, con);
-                                cmd2.Parameters.AddWithValue("fromdate", lm._fromdate);
-                                cmd2.Parameters.AddWithValue("todate", lm._todate);
-                                cmd2.Parameters.AddWithValue("comments", lm._comments);
-                                cmd2.Parameters.AddWithValue("leavedurationtype", lm._leavedurationtype);
-                                cmd2.Parameters.AddWithValue("leaveHalfDaySession", lm._leaveHalfDaySession);
-                                if (lm._cancelled)
-                                {
-                                    cmd2.Parameters.AddWithValue("status", 3);
-                                }
-                                cmd2.Parameters.AddWithValue("lvId", lm._lvId);
-                                cmd2.ExecuteNonQuery();
-                                con.Close();
-
-                                UpdateLeaveStatistics(lm, rtrnArrExis);
-
-                                con.Close();
-                                rtrnStr = "OK";
+                                LeaveModel existLeaveModel = leaveDetailsFetch(lm._lvId);
+                                existLeaveModel.RtrnArry = lm.RtrnArry;
+                                existLeaveModel._cancelled = lm._cancelled;
+                                existLeaveModel._rejected = lm._rejected;
+                                existLeaveModel._status = lm._status;
+                                leaveStatus = (lm._rejected) ? -1 : 3;
+                                lm = existLeaveModel;
                             }
-                            else
-                            {
-                                con.Close();
-                                rtrnStr = "ERROR";
-                            }
+
+                            DateTime frmdt = new DateTime();
+                            DateTime todt = new DateTime();
+                            string LvDurType = "";
+
+                            frmdt = Convert.ToDateTime(lm._fromdate.ToString());
+                            todt = Convert.ToDateTime(lm._todate.ToString());
+                            LvDurType = lm._leavedurationtype.ToString().TrimEnd();
+
+                            rtrnArrExis = CalculateLeaveStatistics(frmdt, todt, lm._strLvType, LvDurType, lm.EmpID);
+
+                            query = "UPDATE EmployeeLeaveInfo SET FromDate = @fromdate,ToDate = @todate,Comments = @comments,DurationType = @leavedurationtype,Status = @status,LeaveSessionType = @leaveHalfDaySession WHERE [Id] = @lvId";
+                            scmd = new SqlCommand(query, con);
+                            scmd.Parameters.AddWithValue("fromdate", lm._fromdate);
+                            scmd.Parameters.AddWithValue("todate", lm._todate);
+                            scmd.Parameters.AddWithValue("comments", lm._comments);
+                            scmd.Parameters.AddWithValue("leavedurationtype", lm._leavedurationtype);
+                            scmd.Parameters.AddWithValue("leaveHalfDaySession", lm._leaveHalfDaySession);
+                            scmd.Parameters.AddWithValue("status", leaveStatus);
+
+                            scmd.Parameters.AddWithValue("lvId", lm._lvId);
+                            scmd.ExecuteNonQuery();
+                            con.Close();
+
+                            UpdateLeaveStatistics(lm, rtrnArrExis);
+
+                            con.Close();
+                            rtrnStr = "OK";
                         }
                     }
-                    #region Changing Status by Admin.
-                    else
-                    {
-
-                    }
-                    #endregion
                 }
             }
             catch (Exception ex)
             {
                 rtrnStr = "ERROR";
             }
-            return new GenericCallbackModel { ID = lm._lvId, Message = rtrnStr, SecID = assc_task_id };
+            return new GenericCallbackModel { ID = lm._lvId, Message = rtrnStr };
         }
 
         public static ArrayList CalculateLeaveStatistics(DateTime from, DateTime to, string leaveType, string LeaveDurationType, int empId)
@@ -1335,7 +1336,7 @@ namespace HrmsMvc
                 DataTable dt = new DataTable();
                 SqlDataAdapter da = null;
 
-                da = new SqlDataAdapter("SELECT * FROM EmployeeLeaveInfo WHERE [Id] = @leave_event_id", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
+                da = new SqlDataAdapter("SELECT info.*,type.Type As LeaveTypeStr FROM EmployeeLeaveInfo info INNER JOIN LeaveType type ON info.LeaveType = type.Id WHERE info.[Id] = @leave_event_id", ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString);
                 da.SelectCommand.Parameters.AddWithValue("leave_event_id", leave_event_id);
                 da.Fill(dt);
                 if (dt != null && dt.Rows.Count > 0)
@@ -1350,6 +1351,7 @@ namespace HrmsMvc
                     li._leaveDurTypeInt = (li._leavedurationtype.Equals("Full Day")) ? 1 : 2;
                     li._comments = dt.Rows[0]["Comments"].ToString();
                     li._leaveHalfDaySession = Convert.ToInt32(dt.Rows[0]["LeaveSessionType"].ToString());
+                    li._strLvType = (!string.IsNullOrEmpty(dt.Rows[0]["LeaveTypeStr"].ToString())) ? dt.Rows[0]["LeaveTypeStr"].ToString().TrimEnd() : "";
 
                     DateTime fd = Convert.ToDateTime(li._fromdate.ToString());
                     DateTime td = Convert.ToDateTime(li._todate.ToString());
@@ -1636,7 +1638,7 @@ namespace HrmsMvc
                         cmd.Parameters.AddWithValue("@task_id", 0);
                         cmd.Parameters.AddWithValue("@start_date", event_info.event_dates[0].start_date);
                         cmd.Parameters.AddWithValue("@end_date", event_info.event_dates[0].end_date);
-                        cmd.Parameters.AddWithValue("@employee_id", string.Join(",", event_info.employee.Select(n => n.ToString()).ToArray()));                       
+                        cmd.Parameters.AddWithValue("@employee_id", string.Join(",", event_info.employee.Select(n => n.ToString()).ToArray()));
 
                         cmd.Parameters["@task_id"].Direction = ParameterDirection.Output;
                         cmd.ExecuteNonQuery();

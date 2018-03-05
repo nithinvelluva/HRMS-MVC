@@ -554,45 +554,47 @@ namespace HrmsMvc.Controllers
                 int empId = leave_model.EmpID;
                 if (empId > 0)
                 {
-                    if (leave_model._leaveType <= 0)
+                    if (!leave_model._cancelled && !leave_model._rejected && !leave_model._status)
                     {
-                        rtrnStr = rtrnStr + "1";
-                    }
-
-                    if (string.IsNullOrEmpty(leave_model._fromdate))
-                    {
-                        rtrnStr = rtrnStr + "2";
-                    }
-                    if (string.IsNullOrEmpty(leave_model._todate))
-                    {
-                        rtrnStr = rtrnStr + "3";
-                    }
-
-                    if (!string.IsNullOrEmpty(leave_model._fromdate) && (!string.IsNullOrEmpty(leave_model._todate)))
-                    {
-                        DateTime frmdt = Convert.ToDateTime(leave_model._fromdate);
-                        DateTime todt = Convert.ToDateTime(leave_model._todate);
-
-                        if (todt < frmdt)
+                        if (leave_model._leaveType <= 0)
                         {
-                            rtrnStr = rtrnStr + "4";
+                            rtrnStr = rtrnStr + "1";
                         }
-                    }
 
-                    if (leave_model._leaveDurTypeInt <= 0)
-                    {
-                        rtrnStr = rtrnStr + "5";
-                    }
+                        if (string.IsNullOrEmpty(leave_model._fromdate))
+                        {
+                            rtrnStr = rtrnStr + "2";
+                        }
+                        if (string.IsNullOrEmpty(leave_model._todate))
+                        {
+                            rtrnStr = rtrnStr + "3";
+                        }
 
+                        if (!string.IsNullOrEmpty(leave_model._fromdate) && (!string.IsNullOrEmpty(leave_model._todate)))
+                        {
+                            DateTime frmdt = Convert.ToDateTime(leave_model._fromdate);
+                            DateTime todt = Convert.ToDateTime(leave_model._todate);
+
+                            if (todt < frmdt)
+                            {
+                                rtrnStr = rtrnStr + "4";
+                            }
+                        }
+
+                        if (leave_model._leaveDurTypeInt <= 0)
+                        {
+                            rtrnStr = rtrnStr + "5";
+                        }
+
+                    }
                     if (string.IsNullOrEmpty(rtrnStr))
                     {
-                        DateTime frmdt = Convert.ToDateTime(leave_model._fromdate);
-                        DateTime todt = Convert.ToDateTime(leave_model._todate);
-                        string LeaveTypeStr = leave_model._strLvType.TrimEnd();
-                        bool flag = false;
+                        bool flag = true;
                         ArrayList rtrnArr = new ArrayList();
 
-                        rtrnArr = Db.CalculateLeaveStatistics(frmdt, todt, LeaveTypeStr, leave_model._leavedurationtype, empId);
+                        DateTime frmdt = Convert.ToDateTime(leave_model._fromdate);
+                        DateTime todt = Convert.ToDateTime(leave_model._todate);
+                        rtrnArr = Db.CalculateLeaveStatistics(frmdt, todt, leave_model._strLvType.TrimEnd(), leave_model._leavedurationtype, empId);
                         if (rtrnArr != null)
                         {
                             flag = Convert.ToBoolean(rtrnArr[2]);
@@ -606,9 +608,7 @@ namespace HrmsMvc.Controllers
                         {
                             LeaveModel lm = new LeaveModel();
                             lm = leave_model;
-                            lm._status = false;
-                            lm._rejected = false;
-                            lm._strLvType = LeaveTypeStr;
+                            lm._strLvType = leave_model._strLvType.TrimEnd();
                             lm.RtrnArry = rtrnArr;
 
                             if (leave_model._lvId <= 0)//Add leave
@@ -616,13 +616,13 @@ namespace HrmsMvc.Controllers
                                 GenericCallbackModel gcm = new GenericCallbackModel();
                                 gcm = Db.AddLeave(lm);
                                 rtrnStr = (gcm != null) ? gcm.Message : null;
-                                lm._lvId = (gcm != null) ? gcm.ID : 0;                                
+                                lm._lvId = (gcm != null) ? gcm.ID : 0;
                             }
                             else//Edit leave
                             {
                                 GenericCallbackModel gcm = new GenericCallbackModel();
-                                gcm = Db.UpdateLeave(lm, leave_model.Usertype);
-                                rtrnStr = (gcm != null) ? gcm.Message : null;                         
+                                gcm = Db.UpdateLeave(lm);
+                                rtrnStr = (gcm != null) ? gcm.Message : null;
                             }
                         }
                     }
@@ -639,11 +639,10 @@ namespace HrmsMvc.Controllers
         public JsonResult ManageLeave(LeaveModel leaveModel)
         {
             GenericCallbackModel gcm = new GenericCallbackModel();
-            gcm = Db.UpdateLeave(leaveModel, leaveModel.Usertype);
-            string rtrnStr = (gcm != null) ? gcm.Message : null;                
-
+            gcm = Db.UpdateLeave(leaveModel);
+            string rtrnStr = (gcm != null) ? gcm.Message : null;
             return null;
-        }       
+        }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult SentQuery(string SenterMail, string emailSubject, string emailBody)
