@@ -371,6 +371,16 @@ namespace HrmsMvc.Controllers
                 empDetails = Db.searchUser(searchText);
             }
             return Json(new { data = empDetails, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
-        }        
+        }
+
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult ManageLeave(LeaveModel leaveModel)
+        {
+            GenericCallbackModel gcm = new GenericCallbackModel();
+            gcm = Db.UpdateLeave(leaveModel);
+            string rtrnStr = (gcm != null) ? gcm.Message : null;
+            return Json(new { data = rtrnStr, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

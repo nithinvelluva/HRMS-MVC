@@ -997,7 +997,6 @@ namespace HrmsMvc
         public static GenericCallbackModel UpdateLeave(LeaveModel lm)
         {
             string rtrnStr = null;
-            int assc_task_id = 0;
             try
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["hrmscon"].ConnectionString))
@@ -1016,6 +1015,10 @@ namespace HrmsMvc
                         query = "UPDATE EmployeeLeaveInfo SET Status = @status WHERE [Id] = @lvId";
                         scmd = new SqlCommand(query, con);
                         scmd.Parameters.AddWithValue("status", leaveStatus);
+                        scmd.Parameters.AddWithValue("lvId", lm._lvId);
+                        scmd.ExecuteNonQuery();
+                        con.Close();
+                        rtrnStr = "OK";
                     }
                     else
                     {

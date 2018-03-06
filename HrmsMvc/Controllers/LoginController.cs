@@ -136,7 +136,7 @@ namespace HrmsMvc.Controllers
                     foreach (DataRow row in dt.Rows)
                     {
                         EmpID = row["EmpId"].ToString();
-                        empName = row["EmpName"].ToString();
+                        empName = row["EmpFirstname"].ToString() + " " + row["EmpLastname"].ToString(); 
                     }
 
                     // generate password token

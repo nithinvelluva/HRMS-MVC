@@ -292,12 +292,12 @@ function empEdit() {
                     $('#roleDropDwnEdit').val(2);
                 },
                 yes_fn: function () {
-                    AjaxCall(url, params, callback, HideLoadprofile);
+                    ajaxPOSTRequest(url, params, callback, HideLoadprofile);
                 }
             });
         }
         else {
-            AjaxCall(url, params, callback, HideLoadprofile);
+            ajaxPOSTRequest(url, params, callback, HideLoadprofile);
         }
     }
 };
@@ -317,7 +317,7 @@ function empDelete() {
             no_fn: function () {
             },
             yes_fn: function () {
-                AjaxCall(url, params, callback, HideLoadprofile);
+                ajaxPOSTRequest(url, params, callback, HideLoadprofile);
             }
         });
     }

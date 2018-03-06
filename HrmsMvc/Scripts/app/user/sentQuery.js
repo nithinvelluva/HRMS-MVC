@@ -1,10 +1,9 @@
-﻿function SentQuery() {
-    var fromEmail = "nithinvelluva@gmail.com";
+﻿function SentQuery() {    
     var emailSubject = $('#Emailsubject').val();
     var emailBody = $('#EmailBody').val();
     if (emailSubject && emailBody) {
         showLoadreport("#LoadPageLvQuery", "#contactAdminDiv");
-        var params = { SenterMail: fromEmail, emailSubject: emailSubject, emailBody: emailBody };
+        var params = { emailSubject: emailSubject, emailBody: emailBody };
         $.ajax({
             url: "/User/SentQuery",
             type: "POST",
@@ -16,8 +15,7 @@
                 if ("OK" == status.data) {
                     $('#Emailsubject').val('');
                     $('#EmailBody').val('');
-                    $('#SentLeaveQueryModal').modal('toggle');
-                    //showMessageBox(SUCCESS, "Query Sent Successfully." + "\n" + "We will get back to you soon..");
+                    $('#SentLeaveQueryModal').modal('toggle');                    
                     ymz.jq_alert({
                         title: "HRMS",
                         text: "Query Sent Successfully." + "\n" + "We will get back to you soon..",
@@ -25,8 +23,7 @@
                         close_fn: null
                     });
                 }
-                else {
-                    //showMessageBox(ERROR, status);
+                else {                   
                     ymz.jq_alert({
                         title: "HRMS",
                         text: "An Unexpected Error Occured!!",
@@ -37,7 +34,6 @@
             },
             error: function () {
                 HideLoadreport("#LoadPageLvQuery", "#contactAdminDiv");
-                //showMessageBox(ERROR, "An unexpected error occured !!");
                 ymz.jq_alert({
                     title: "HRMS",
                     text: "An unexpected error occured !",

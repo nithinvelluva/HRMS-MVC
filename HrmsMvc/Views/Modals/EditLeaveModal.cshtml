@@ -93,6 +93,11 @@
                             <i class="fa fa-envelope fa-2x cursor" aria-hidden="true" id="cntctAdmin" data-toggle="modal" data-target="#SentLeaveQueryModal"
                                title="Contact Admin"></i>
                         }
+                        else
+                        {
+                            <input type="button" value="Reject Leave Request" style="display:none" id="LeaveRejectBtn" class="btn btn-danger btn-fill" onclick="LeaveManageClick(false);" />
+                            <input type="button" value="Approve Leave Request" style="display:none" id="LeaveApproveBtn" class="btn btn-success btn-fill" onclick="LeaveManageClick(true);" />
+                        }
                     </div>
                 </div>
             </div>

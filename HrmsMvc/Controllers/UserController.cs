@@ -633,29 +633,35 @@ namespace HrmsMvc.Controllers
                 rtrnStr = null;
             }
             return Json(new { data = rtrnStr, UpdateStatus = "OK" }, JsonRequestBehavior.AllowGet);
-        }
+        }        
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult ManageLeave(LeaveModel leaveModel)
-        {
-            GenericCallbackModel gcm = new GenericCallbackModel();
-            gcm = Db.UpdateLeave(leaveModel);
-            string rtrnStr = (gcm != null) ? gcm.Message : null;
-            return null;
-        }
-
-        [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult SentQuery(string SenterMail, string emailSubject, string emailBody)
+        public JsonResult SentQuery(string emailSubject, string emailBody)
         {
             string rtrnStr = null;
-            try
+            if (Session["USER"] != null)
             {
-                Helpers.Helper.sentEmail("Query from " + SenterMail + " : " + emailSubject, emailBody, "tnoreply001@gmail.com");
-                rtrnStr = "OK";
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                EmployeeModel em = new EmployeeModel()
+                {
+                    EmpID = (Session["USER"] as EmployeeModel).EmpID,
+                    Usertype = (Session["USER"] as EmployeeModel).Usertype,
+                    EmpFirstname = (Session["USER"] as EmployeeModel).EmpFirstname,
+                    EmpLastname = (Session["USER"] as EmployeeModel).EmpLastname,
+                };
+                try
+                {
+                    DataTable dt = Db.GetEmployeeInfo(em.EmpID);
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        string SenterMail = dt.Rows[0]["EmpEmail"].ToString();
+                        Helpers.Helper.sentEmail("Query from " + SenterMail + " : " + emailSubject, emailBody, "tnoreply001@gmail.com");
+                        rtrnStr = "OK";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
             return Json(new { data = rtrnStr }, JsonRequestBehavior.AllowGet);
         }

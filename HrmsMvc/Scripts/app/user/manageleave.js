@@ -18,6 +18,8 @@ function initLeaveModal() {
     $('#cntctAdmin').hide();
     $('#LeaveUpdateBtn').hide();
     $('#LeaveCancelBtn').hide();
+    $('#LeaveRejectBtn').hide();
+    $('#LeaveApproveBtn').hide();
     DisableLeaveFields();
 };
 function LeaveUpdateClick() {
@@ -28,7 +30,7 @@ function LeaveUpdateClick() {
     var lvTypInt = $('#leaveTypeLabel').val();
     var lvtypstr = $('#leaveTypeLabel option:selected').text();
     var lvdurtyp = $('#LvDurTypLabel').val();
-    var lvdurtypstr = $('#LvDurTypLabel option:selected').text();    
+    var lvdurtypstr = $('#LvDurTypLabel option:selected').text();
     var LvSession = $('#LeaveSessionDropDown').val();
 
     var validFlag = false;
@@ -44,7 +46,7 @@ function LeaveUpdateClick() {
         validFlag = true;
     }
     if (!validFlag) {
-        showLoadreport("#LoadPageLvEdit", ".lvEditView");
+        showLoadleavereport("#LoadPageLvEdit", ".lvEditView");
         var params = {
             _lvId: leaveID,
             EmpID: empId,
@@ -55,11 +57,12 @@ function LeaveUpdateClick() {
             _comments: comments ? comments : "",
             _strLvType: lvtypstr,
             Usertype: userType,
-            _leavedurationtype: lvdurtypstr,            
+            _leavedurationtype: lvdurtypstr,
             _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0,
             _cancelled: false
         };
-        manageLeaveAjaxRequest(params);
+        var url = "/User/AddLeave";
+        manageLeaveAjaxRequest(params, url);
     }
     else {
         ymz.jq_alert({
@@ -78,7 +81,7 @@ function LeaveCancelClick() {
         text: message,
         no_btn: "No",
         yes_btn: "Yes",
-        no_fn: function () {            
+        no_fn: function () {
         },
         yes_fn: function () {
             var leaveID = $('#LeaveId').val();
@@ -104,19 +107,60 @@ function LeaveCancelClick() {
                 _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0,
                 _cancelled: true
             };
-            manageLeaveAjaxRequest(params);
+            var url = "/User/AddLeave";
+            manageLeaveAjaxRequest(params, url);
         }
     });
 };
-function manageLeaveAjaxRequest(leave_model) {
+function LeaveManageClick(approve) {
+    var message = "Are you sure want to continue ?";
+    var title = "HRMS";
+    ymz.jq_confirm({
+        title: !stringIsNull(title) ? title : "HRMS",
+        text: message,
+        no_btn: "No",
+        yes_btn: "Yes",
+        no_fn: function () {
+        },
+        yes_fn: function () {
+            var leaveID = $('#LeaveId').val();
+            var strtDate = $('#LvstartDateLabel').val();
+            var toDate = $('#LvtoDateLabel').val();
+            var comments = $('#cmntsArea').val();
+            var lvTypInt = $('#leaveTypeLabel').val();
+            var lvtypstr = $('#leaveTypeLabel option:selected').text();
+            var lvdurtyp = $('#LvDurTypLabel').val();
+            var lvdurtypstr = $('#LvDurTypLabel option:selected').text();
+            var LvSession = $('#LeaveSessionDropDown').val();
+            var params = {
+                _lvId: leaveID,
+                EmpID: empId,
+                _fromdate: strtDate,
+                _todate: toDate,
+                _leaveType: lvTypInt,
+                _leaveDurTypeInt: lvdurtyp,
+                _comments: comments ? comments : "",
+                _strLvType: lvtypstr,
+                Usertype: userType,
+                _leavedurationtype: lvdurtypstr,
+                _leaveHalfDaySession: (2 == lvdurtyp) ? LvSession : 0,
+                _rejected: !approve,
+                _status: approve
+            };
+            var url = "/admin/ManageLeave";
+            manageLeaveAjaxRequest(params, url);
+        }
+    });    
+};
+function manageLeaveAjaxRequest(leave_model, url) {
     $.ajax({
-        url: "/User/AddLeave",
+        url: url,
         type: "POST",
         data: JSON.stringify(leave_model),
         datatype: "json",
         contentType: "application/json",
         success: function (status) {
-            HideLoadreport("#LoadPageLvEdit", ".lvEditView");
+            HideLoadLeavereport("#LoadPageLvEdit", ".lvEditView");
             if (!stringIsNull(status.data)) {
                 var error = '';
                 var response = status.data;
@@ -175,7 +219,7 @@ function manageLeaveAjaxRequest(leave_model) {
             }
         },
         error: function (status) {
-            HideLoadreport("#LoadPageLvEdit", ".lvEditView");
+            HideLoadLeavereport("#LoadPageLvEdit", ".lvEditView");
             ymz.jq_alert({
                 title: "HRMS",
                 text: "An unexpected error occured !",
@@ -218,6 +262,8 @@ function leaveDetailsFetchCallback(response) {
         if (data._leaveStatus == "PENDING") {
             $('#LeaveUpdateBtn').show();
             $('#LeaveCancelBtn').show();
+            $('#LeaveRejectBtn').show();
+            $('#LeaveApproveBtn').show();
             $('#leaveStatusLabel').css('color', '#ff6a00');//orange color
             EnableLeaveFields();
         }
@@ -283,4 +329,14 @@ function leaveDetailsFetchCallback(response) {
         (durId == 2) ? $('#lvSessionTypDiv').removeClass('hidden') : ($('#lvSessionTypDiv').removeClass('hidden').addClass('hidden'));
     }
     leaveEditPopupLoading(false);
+};
+function showLoadleavereport(activDiv, disableDiv) {
+    $(activDiv).show();
+    $(disableDiv).addClass("disablediv");
+    $(".waitIconDiv").css("display", "block");
+};
+function HideLoadLeavereport(activDiv, disableDiv) {
+    $(activDiv).hide();
+    $(disableDiv).removeClass("disablediv");
+    $(".waitIconDiv").css("display", "none");
 };
