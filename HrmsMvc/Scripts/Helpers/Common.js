@@ -193,7 +193,7 @@ function setLocalValue(key, value) {
 function getLocalValue(key) {
     return sessionStorage.getItem(key) ? JSON.parse(sessionStorage.getItem(key)) : null;
 };
-function AjaxCall(url, params, callback, loadHideCallback) {
+function ajaxPOSTRequest(url, params, callback, loadHideCallback) {
     showLoadprofile();
     $.ajax({
         url: url,
