@@ -960,6 +960,7 @@ namespace HrmsMvc
                             cmd2.Parameters.AddWithValue("@leavedurationtype", lm._leavedurationtype);
                             cmd2.Parameters.AddWithValue("@leaveId", 0);
                             cmd2.Parameters.AddWithValue("@leaveSessionType", lm._leaveHalfDaySession);
+                            cmd2.Parameters.AddWithValue("@calendarEntryId", 0);                            
 
                             cmd2.Parameters["@leaveId"].Direction = ParameterDirection.Output;
                             cmd2.ExecuteNonQuery();
@@ -1643,6 +1644,7 @@ namespace HrmsMvc
                         cmd.Parameters.AddWithValue("@end_date", event_info.event_dates[0].end_date);
                         cmd.Parameters.AddWithValue("@employee_id", string.Join(",", event_info.employee.Select(n => n.ToString()).ToArray()));
                         cmd.Parameters.AddWithValue("@isLeaveTask", false);
+                        cmd.Parameters.AddWithValue("@leaveId", 0);
 
                         cmd.Parameters["@task_id"].Direction = ParameterDirection.Output;
                         cmd.ExecuteNonQuery();

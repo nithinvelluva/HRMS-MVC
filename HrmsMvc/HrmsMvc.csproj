@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -150,6 +151,12 @@
     <Content Include="Content\Uploads\task_8c8b166f-84fb-4c8a-ba82-2c29ff6a869c.txt" />
     <Content Include="Content\Uploads\task_f3e6d234-c009-46f2-a380-2228b3b56e35.jpg" />
     <Content Include="Content\ymz_box.css" />
+    <Content Include="Db Scripts\Data Script calendar.sql" />
+    <Content Include="Db Scripts\Data Script.sql" />
+    <Content Include="Db Scripts\Data Script_02.sql" />
+    <Content Include="Db Scripts\StoredProcedures.sql" />
+    <Content Include="Db Scripts\Table Scripts.sql" />
+    <Content Include="Db Scripts\Table Scripts_01.sql" />
     <Content Include="Default.aspx" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
