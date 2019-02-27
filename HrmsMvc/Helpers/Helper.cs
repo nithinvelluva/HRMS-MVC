@@ -173,26 +173,32 @@ namespace HrmsMvc.Helpers
 
         public static void sentEmail(string emailSubject, string emailBody, string toEmail)
         {
-            string mailfrom = "tnoreply001@gmail.com";
-            string mailTo = toEmail;
+            try
+            {
+                string mailfrom = "tnoreply001@gmail.com";
 
-            MailMessage email = new MailMessage();
-
-            email.Subject = emailSubject;
-            email.From = new MailAddress(mailfrom);
-            email.To.Add(new MailAddress(mailTo));
-            email.IsBodyHtml = true;
-            email.Body = emailBody;
-
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 25);
-            //client.Port = 25;
-            client.EnableSsl = true;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-            //client.Host = "smtp.gmail.com";
-            client.Credentials = new NetworkCredential("tnoreply001@gmail.com", "#123Testuser");
-            client.Timeout = 360000;
-            client.Send(email);
+                SmtpClient client = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 25,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential("tnoreply001@gmail.com", "#123Testuser"),
+                    Timeout = 360000
+                };
+                using (var message = new MailMessage(mailfrom, toEmail)
+                {
+                    Subject = emailSubject,
+                    Body = emailBody,
+                    IsBodyHtml = true
+                })
+                client.Send(message);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
