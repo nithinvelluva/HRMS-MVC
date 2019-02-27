@@ -1642,6 +1642,7 @@ namespace HrmsMvc
                         cmd.Parameters.AddWithValue("@start_date", event_info.event_dates[0].start_date);
                         cmd.Parameters.AddWithValue("@end_date", event_info.event_dates[0].end_date);
                         cmd.Parameters.AddWithValue("@employee_id", string.Join(",", event_info.employee.Select(n => n.ToString()).ToArray()));
+                        cmd.Parameters.AddWithValue("@isLeaveTask", false);
 
                         cmd.Parameters["@task_id"].Direction = ParameterDirection.Output;
                         cmd.ExecuteNonQuery();
