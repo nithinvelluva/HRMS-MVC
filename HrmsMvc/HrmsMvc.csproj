@@ -154,6 +154,7 @@
     <Content Include="Db Scripts\Data Script calendar.sql" />
     <Content Include="Db Scripts\Data Script.sql" />
     <Content Include="Db Scripts\Data Script_02.sql" />
+    <Content Include="Db Scripts\hrms_script.sql" />
     <Content Include="Db Scripts\StoredProcedures.sql" />
     <Content Include="Db Scripts\Table Scripts.sql" />
     <Content Include="Db Scripts\Table Scripts_01.sql" />
