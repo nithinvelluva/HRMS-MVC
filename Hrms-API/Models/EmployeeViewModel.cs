@@ -21,9 +21,7 @@ namespace HrmsMvc.Models
         public int UserType { get; set; }
 
         [AllowHtml]
-        [Display(Name = "Please enter your email")]
-        //[Required(ErrorMessage = "Please enter your email to receive password reset link")]
-        //[RegularExpression(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", ErrorMessage = "Enter a valid email id")]
+        [Display(Name = "Please enter your email")]        
         public string UserEmail { get; set; }
 
         [AllowHtml]

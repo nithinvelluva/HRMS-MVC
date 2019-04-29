@@ -34,7 +34,7 @@ namespace HrmsMvc.Controllers
 
         // POST: Login
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Login(LoginModel lobj)
+        public ActionResult Login(UserModel lobj)
         {
             string userName = lobj.UserName;
             string password = lobj.Password;
@@ -113,7 +113,7 @@ namespace HrmsMvc.Controllers
         // POST: ForgotPassword
         [AcceptVerbs(HttpVerbs.Post)]
         [OutputCache(NoStore = true, Duration = 0)]
-        public ActionResult ForgotPassword(LoginModel lobj)
+        public ActionResult ForgotPassword(UserModel lobj)
         {
             if (string.IsNullOrEmpty(lobj.UserEmail))
             {
@@ -168,13 +168,13 @@ namespace HrmsMvc.Controllers
         {
             if (!string.IsNullOrEmpty(un) && !string.IsNullOrEmpty(rt) && !string.IsNullOrEmpty(empId))
             {
-                Session["RESETLINKPARAM"] = new LoginModel() { Id = Convert.ToInt32(empId), UserToken = rt };
+                Session["RESETLINKPARAM"] = new UserModel() { Id = Convert.ToInt32(empId), UserToken = rt };
 
                 if (!string.IsNullOrEmpty(empId) && !string.IsNullOrEmpty(rt))
                 {
                     if (Db.validateResetPasswordToken(empId, rt))
                     {
-                        return View(new LoginModel());
+                        return View(new UserModel());
                     }
                 }
             }
@@ -185,12 +185,12 @@ namespace HrmsMvc.Controllers
         // POST: ResetPassword
         [AcceptVerbs(HttpVerbs.Post)]
         [OutputCache(NoStore = true, Duration = 0)]
-        public ActionResult ResetPassword(LoginModel lobj)
+        public ActionResult ResetPassword(UserModel lobj)
         {
             if (Session["RESETLINKPARAM"] != null)
             {
-                int EmpID = (Session["RESETLINKPARAM"] as LoginModel).Id;
-                string token = (Session["RESETLINKPARAM"] as LoginModel).UserToken;
+                int EmpID = (Session["RESETLINKPARAM"] as UserModel).Id;
+                string token = (Session["RESETLINKPARAM"] as UserModel).UserToken;
 
                 if (string.IsNullOrEmpty(lobj.Password))
                 {
