@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HRMS</title>   
+</head>
+<body>
+    <div class="wrapper">
+        <section>
+          <form aria-autocomplete="off">
+            <div class="login-card">
+                <h2 class="text-center">LOGIN</h2><br>
+                <input class="form-control" id="UserName" name="UserName" onblur="onBlurInput()" placeholder="USERNAME" type="text">
+                <input class="form-control" id="Password" name="Password" onblur="onBlurInput()" placeholder="PASSWORD" type="password">
+                <input type="submit" name="login" class="login login-submit btn btn-primary btn-fill" value="Sign In">
+                <br />
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <a href="~/login/forgotpassword" class="pull-right hrefLink" id="btnForgotPwd">Forgot Password ?</a>
+                </div>                        
+            </div>
+          </form>            
+        </section>
+    </div>
+</body>
+</html>
