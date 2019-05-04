@@ -8,12 +8,15 @@
     src: url("/assets/fonts/BrandonText-Medium.woff") format('woff');
 }
 
+.login-wrapper {
+    height:100vh;
+  }
 #loginform .form-control{
     font-family: BrandonTextMedium !important;
 }
 
-body {
-    background-color: #eee !important;    
+.body-content {
+    background-image: url(/assets/images/loginbknd.svg);  
     font-family: BrandonTextMedium !important;
     height: 100%;
 }
