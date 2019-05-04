@@ -3,26 +3,25 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
-import { ChangepasswordComponent } from './auth/changepassword/changepassword.component';
-import { ForgotpasswordComponent } from './auth/forgotpassword/forgotpassword.component';
-import { ResetpasswordComponent } from './auth/resetpassword/resetpassword.component';
+
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+
 import { ProfileComponent } from './pages/user/profile/profile.component';
 import { UsersComponent } from './pages/admin/users/users.component';
+import { PhotoComponent } from './pages/user/photo/photo.component';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent,
-    ChangepasswordComponent,
-    ForgotpasswordComponent,
-    ResetpasswordComponent,
+    AppComponent,   
     ProfileComponent,
-    UsersComponent
+    UsersComponent,
+    PhotoComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AngularFontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

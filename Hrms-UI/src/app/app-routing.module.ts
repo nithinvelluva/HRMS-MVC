@@ -1,9 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ErrorComponent } from './error/error.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: 'auth', loadChildren: "./auth/auth.module#AuthModule" },
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
+  { path: '**', component: ErrorComponent },
+  
+];
 
 @NgModule({
+  declarations: [ErrorComponent],
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
