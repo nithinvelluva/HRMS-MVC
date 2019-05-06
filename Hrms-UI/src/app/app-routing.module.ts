@@ -5,6 +5,7 @@ import { ErrorComponent } from './shared/error/error.component';
 const routes: Routes = [
   { path: 'auth', loadChildren: "./auth/auth.module#AuthModule" },
   { path: 'user', loadChildren: "./pages/user/user.module#UserModule" },
+  { path: 'admin', loadChildren: "./pages/admin/admin.module#AdminModule" },
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: '**', component: ErrorComponent }  
 ];

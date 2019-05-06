@@ -1,11 +1,11 @@
 @font-face {
     font-family: "BrandonTextLight";
-    src: url("/Content/fonts/BrandonText-Light.woff") format('woff');
+    src: url("/assets/fonts/BrandonText-Light.woff") format('woff');
 }
 
 @font-face {
     font-family: "BrandonTextMedium";
-    src: url("/Content/fonts/BrandonText-Medium.woff") format('woff');
+    src: url("/assets/fonts/BrandonText-Medium.woff") format('woff');
 }
 /* Tree View Styles Starts Here*/
 
