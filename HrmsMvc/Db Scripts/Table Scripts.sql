@@ -1,3 +1,6 @@
+IF EXISTS(SELECT * FROM master.sys.databases WHERE name='Hrms')
+BEGIN
+USE [Hrms];
 IF (NOT EXISTS (SELECT * 
                  FROM INFORMATION_SCHEMA.TABLES  WHERE TABLE_SCHEMA = 'dbo'  AND  TABLE_NAME = 'LeaveType'))
 BEGIN
@@ -290,4 +293,4 @@ ALTER TABLE [dbo].[LeaveStatistics]  WITH CHECK ADD FOREIGN KEY([EmpId])
 REFERENCES [dbo].[EmployeeInfo] ([EmpId])
 END
 ---------------------------------------------------------------
-
+END
