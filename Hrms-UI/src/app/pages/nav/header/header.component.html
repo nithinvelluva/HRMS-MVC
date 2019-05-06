@@ -1,0 +1,35 @@
+<nav class="navbar navbar-default navbar-fixed">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2" hidden>
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="javascript:void(0)">Profile</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right" style="padding-right:1em">
+                <li class="dropdown cursor">
+                    <a href="javascript:void(0)" class="dropdown-toggle usr_drpdwn" data-toggle="dropdown">
+                        <label id="wlcmMsgLabel" class="wlcmMsg" title="EmpFirstname EmpLastname">EmpFirstname EmpLastname</label>&nbsp;<i class="fa fa-user" aria-hidden="true"></i>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="cursor">
+                            <a routerLink="/auth/changepassword" id="chngPwdRef">
+                                <i class="fa fa-cog" aria-hidden="true"></i>&nbsp;Change Password
+                            </a>
+                        </li>
+                        <li class="cursor">
+                            <a routerLink="~/login/logout" id="signoutRef">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

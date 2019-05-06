@@ -2,25 +2,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+
 import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
-import { ChangepasswordComponent } from './auth/changepassword/changepassword.component';
-import { ForgotpasswordComponent } from './auth/forgotpassword/forgotpassword.component';
-import { HeaderComponent } from './nav/header/header.component';
-import { FooterComponent } from './nav/footer/footer.component';
+import { LoaderComponent } from './shared/loader/loader.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent,
-    ChangepasswordComponent,
-    ForgotpasswordComponent,
-    HeaderComponent,
-    FooterComponent    
+    AppComponent,    
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AngularFontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

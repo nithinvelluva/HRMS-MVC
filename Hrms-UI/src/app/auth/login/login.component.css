@@ -8,12 +8,16 @@
     src: url("/assets/fonts/BrandonText-Medium.woff") format('woff');
 }
 
+.auth-wrapper {
+    height:100vh;
+  }
 #loginform .form-control{
     font-family: BrandonTextMedium !important;
 }
 
-body {
-    background-color: #eee !important;    
+.body-content {
+    background-image: url(/assets/images/loginbknd.svg); 
+    /*background: #eee;*/
     font-family: BrandonTextMedium !important;
     height: 100%;
 }
@@ -63,7 +67,9 @@ body {
     border-radius: 5px / 5px;
     box-shadow: 10px 10px 5px #888888;
 }
-
+.hrefLink{
+    cursor: pointer;
+}
 .login-card {
     padding: 40px;
     max-width: 400px;

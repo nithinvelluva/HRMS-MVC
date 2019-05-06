@@ -1,18 +1,23 @@
- <div class="wrapper">
-        <section>
-          
-            <div class="login-card">
-                <h2 class="text-center">LOGIN</h2><br>
-                <input class="form-control" id="UserName" name="UserName" onblur="onBlurInput()" 
-                placeholder="USERNAME" type="text">
-                <input class="form-control" id="Password" name="Password" onblur="onBlurInput()" 
-                placeholder="PASSWORD" type="password">
-                <input type="submit" name="login" class="login login-submit btn btn-primary btn-fill" value="Sign In">
-                <br />
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <a routerLink="/auth/forgotpassword" class="pull-right hrefLink" id="btnForgotPwd">Forgot Password ?</a>
-                </div>                        
-            </div>
-                  
-        </section>
-    </div>
+<div class="body-content">
+  <app-header></app-header>
+  <div class="container auth-wrapper">
+    <section>
+      <form aria-autocomplete="off" method="POST">
+        
+        <div class="login-card">
+          <h2 class="text-center">LOGIN</h2><br>
+          <input class="form-control" id="UserName" name="UserName" (blur)="onBlurInput()" placeholder="USERNAME"
+            type="text">
+          <input class="form-control" id="Password" name="Password" (blur)="onBlurInput()" placeholder="PASSWORD"
+            type="password">
+          <input type="submit" name="login" class="login login-submit btn btn-primary btn-fill" value="Sign In">
+          <br />
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a routerLink="/auth/forgotpassword" class="float-right hrefLink" id="btnForgotPwd">Forgot Password ?</a>
+          </div>
+        </div>
+      </form>
+    </section>
+    <app-footer></app-footer>
+  </div>
+</div>
