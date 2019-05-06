@@ -1,0 +1,48 @@
+<div class="sidebar" data-color="purple">
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a routerLink="/user/profile" class="simple-text">
+                <i class="pe-7s-home"></i>&nbsp;HRMS - PROFILE
+            </a>
+        </div>
+        <ul class="main-nav nav">
+            <li id="userProfileRef">
+                <a routerLink="/user/profile">
+                    <i class="pe-7s-id"></i>
+                    <p>Profile</p>
+                </a>
+            </li>
+            <li id="attendanceRef">
+                <a routerLink="/user/attendance">
+                    <i class="pe-7s-note"></i>
+                    <p>Attendance</p>
+                </a>
+            </li>
+            <li id="leavesRef" (click)="leaveRefClick()" class="cursor">
+                <a href="#leaveItemsDiv" data-toggle="collapse" aria-haspopup="false" aria-expanded="false">
+                    <i class="pe-7s-note2"></i>
+                    <p>
+                        Leaves
+                        <i id="dropdownIcon" class="glyphicon glyphicon-chevron-down pull-right dropdown-icon-normal"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-list collapse" id="leaveItemsDiv">
+                    <li class="cursor" id="applyLeaveRefLi"><a routerLink="/user/leaves">Apply Leave</a></li>
+                    <li class="cursor" id="leaveReportRefLi"><a routerLink="/user/leavereports">Leave Reports</a></li>
+                </ul>
+            </li>
+            <li id="empReportRef">
+                <a routerLink="/user/reports">
+                    <i class="pe-7s-news-paper"></i>
+                    <p>Reports</p>
+                </a>
+            </li>
+            <li id="empEventsRef">
+                <a routerLink="/shared/calendar">
+                    <i class="pe-7s-graph" aria-hidden="true"></i>
+                    <p>Tasks</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

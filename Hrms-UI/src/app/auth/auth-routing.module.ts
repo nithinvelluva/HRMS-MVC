@@ -15,13 +15,19 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    declarations: [LoginComponent,
+    declarations: [
+        LoginComponent,
         ChangepasswordComponent,
         ForgotpasswordComponent,
         ResetpasswordComponent,
         HeaderComponent,
-        FooterComponent],
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+        FooterComponent
+    ],
+    imports: [
+        RouterModule.forChild(routes)
+    ],
+    exports: [
+        RouterModule
+    ]
 })
 export class AuthRoutingModule { }
